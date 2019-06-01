@@ -31,7 +31,7 @@ generar_muestra <- function(n, generadores_x, generador_eps, beta_pgd) {
   # Genero variables regresoras y errores
   for (nombre in names(generadores_x)) {
     if (nombre != "y") {
-      df[nombre] <- generadores[[nombre]](n)
+      df[nombre] <- generadores_x[[nombre]](n)
     }
   df$eps <- generador_eps(n) 
   }
@@ -120,4 +120,4 @@ intervalos <- muestras_puntuales %>%
 # Esto lo hice para probar que diera algo. Y da!
 intervalos %>%
   group_by(distr_eps, n, met_int, fun_a) %>%
-  summarise(prop_cubre = mean(cubre)) %>% View
+  summarise(prop_cubre = mean(cubre)) %>% write_csv("sintesis-resultados.csv")
