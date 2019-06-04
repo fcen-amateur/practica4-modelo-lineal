@@ -40,7 +40,7 @@ generar_muestra <- function(n, generadores_x, generador_eps, beta_pgd) {
   df$eps <- generador_eps(n)
   }
   # Genero y
-  df[["y"]] <- pmap_dbl(df, generador_y, beta_pgd=beta_pgd)
+  df["y"] <- pmap_dbl(df, generador_y, beta_pgd=beta_pgd)
 
   return(df)
 }
@@ -72,7 +72,6 @@ cubre <- function(intervalo, valor) { intervalo[1] <= valor & intervalo[2] >= va
 
 ayudante_generar_muestra <- function(distr_eps, generadores_x, beta_pgd, n) {
   generar_muestra(n,generadores_x, generadores_eps[[distr_eps]],beta_pgd=beta_pgd)
-
 }
 
 #Pasamos a modo multihilo porque se vienen cálculos feos
@@ -81,10 +80,10 @@ plan(multiprocess)
 future.globals.maxSize = '+inf'
 
 
-#n_muestrales <- c(10, 25, 100)
-n_muestrales <- c(10, 25, 100, 250, 500, 1000, 1500, 2000, 3000)
+n_muestrales <- c(10, 25, 100)
+#n_muestrales <- c(10, 25, 100, 250, 500, 1000, 1500, 2000, 3000)
 max_n_muestral <- max(n_muestrales)
-n_sims <- 1000
+n_sims <- 5
 muestras_maestras <- crossing(
   n_sim = seq(max_n_muestral),
   distr_eps = names(generadores_eps)) %>%
@@ -98,20 +97,45 @@ muestras_maestras <- crossing(
 
 muestras_maestras %>% write_rds("muestras_maestras.Rds")
 
-muestras_puntuales <- muestras_maestras %>%
-  crossing(n = n_muestrales) %>%
-  mutate(
-    muestra = future_map2(muestra, n, head),
-    llamada_lm = future_map(muestra, ~lm(y ~ x1 + x2 + x3 +x4, data = .))
+
+# El '-3' es poco legible, buscar cómo sustraer una columna por nombre.
+
+muestras_puntuales <- muestras_maestras[-3] %>%
+  crossing(
+    n = n_muestrales
   )
+
 
 muestras_puntuales %>% write_rds("muestras_puntuales.Rds")
 
 ayudante_intervalo_conf <- function(fun_a, llamada_lm, met_int, alfa) {
-  intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm, metodo = met_int, alfa)
+ intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm, metodo = met_int, alfa)
 }
 
-#  Combinacioles lineales de beta_pgd a estimar (matriz A q*p de la teoría general).
+#ayudante recibe el número de simulación, n y la distribución de epsilon. En base a eso elabora un intervalo con el método met_int de nivel 1- alfa.
+
+ayudante_intervalo_conf <- function(n_simulacion, distr_epsilon, n, fun_a, met_int, alfa) {
+  muestra_a_evaluar <- (muestras_maestras %>% filter(n_sim==n_simulacion,distr_eps==distr_epsilon))[[1,'muestra']] %>% head(n)
+  modelo <- lm(y ~ x1 + x2 + x3 +x4,data=muestra_a_evaluar)
+  intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm=modelo, alfa=alfa, metodo = met_int)
+}
+
+
+                                        #para debug:
+mirarSimilares <- function(x) {
+  filter(x,
+         distr_eps=='normal',
+         n==10,
+         fun_a=='beta1',
+         met_int=='exacto'
+         )
+}
+
+debugear_ayudante <- function (x) ayudante_intervalo_conf(n_sim=x,distr_eps='lognormal',n=10,fun_a='beta1',met_int='exacto',alfa=0.1)
+
+parametrosAMirar <- c('n_sim','distr_eps','ic_upp','ic_low')
+
+#  Combinaciones lineales de beta_pgd a estimar (matriz A q*p de la teoría general).
 funciones_a <- list(
   beta1 = c(0, 1, 0, 0, 0),
   beta4 = c(0, 0, 0, 0, 1)
@@ -124,15 +148,15 @@ intervalos <- muestras_puntuales %>%
     fun_a = names(funciones_a),
     met_int = metodos_intervalo) %>%
   mutate(
-    #atbeta es el valor del parámetro en el PGD. 
+    #atbeta es el valor del parámetro en el PGD.
     atbeta = map_dbl(fun_a, function(i) funciones_a[[i]] %*% beta_pgd),
-    ic = future_pmap(
-      list(fun_a, llamada_lm, met_int),
+    ic = future_pmap( .progress = TRUE,
+      list(n_sim, distr_eps, n, fun_a, met_int),
       ayudante_intervalo_conf,
       alfa = alfa),
-    cubre = future_map2_lgl(ic, atbeta, cubre),
-    ic_low = future_map_dbl(ic, 1),
-    ic_upp = future_map_dbl(ic, 2)
+    cubre = map2_lgl(ic, atbeta, cubre),
+    ic_low = map_dbl(ic, 1),
+    ic_upp = map_dbl(ic, 2)
     )
 
 # Guardamos la simulación
