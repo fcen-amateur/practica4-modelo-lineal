@@ -119,13 +119,17 @@ muestras_puntuales %>% write_rds("muestras_puntuales.Rds")
 
 #ayudante recibe el número de simulación, n y la distribución de epsilon. En base a eso elabora un intervalo con el método met_int de nivel 1- alfa.
 
+## Falta la llamada a lm
+
+#    llamada_lm = map(muestra, ~lm(y ~ x1 + x2 + x3 +x4, data = .))
+
 ayudante_intervalo_conf <- function(fun_a, n_sim, distr_eps, n, met_int, alfa) {
-  llamada_lm = muestras_maestras %>%
+  muestra_a_evaluar <- muestras_maestras %>%
     filter(
       n_sim==n_sim,
       distr_eps==distr_eps
-    ) %>%
-    pluck('muestra')
+    )
+    llamada_lm <- lm(y ~ x1 + x2 + x3 +x4,data=muestra_a_evaluar[[1,'muestra']])
   intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm, metodo = met_int, alfa)
 }
 
@@ -145,8 +149,8 @@ intervalos <- muestras_puntuales %>%
     #atbeta es el valor del parámetro en el PGD.
     atbeta = map_dbl(fun_a, function(i) funciones_a[[i]] %*% beta_pgd),
     ic = pmap(
-    # por accá voy, adaptar la llamada al adyudante nuevo
-      list(fun_a, n_sim, distr_eps, n, met_int, alfa),
+    # por acá voy, adaptar la llamada al adyudante nuevo
+      list(fun_a, n_sim, distr_eps, n, met_int),
       ayudante_intervalo_conf,
       alfa = alfa),
     cubre = map2_lgl(ic, atbeta, cubre),
