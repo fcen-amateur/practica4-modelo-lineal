@@ -1,7 +1,7 @@
 library('tidyverse')
 library('stats')
-#library('future')
-#library('furrr')
+library('future')
+library('furrr')
 set.seed(42)
 
 # Coeficientes "platonicos" (i.e., del proceso generador de datos)
@@ -40,7 +40,7 @@ generar_muestra <- function(n, generadores_x, generador_eps, beta_pgd) {
   df$eps <- generador_eps(n)
   }
   # Genero y
-  df[["y"]] <- pmap_dbl(df, generador_y, beta_pgd=beta_pgd)
+  df[["y"]] <- future_pmap_dbl(df, generador_y, beta_pgd=beta_pgd)
 
   return(df)
 }
@@ -88,7 +88,7 @@ muestras_maestras <- crossing(
   n_sim = seq(max_n_muestral),
   distr_eps = names(generadores_eps)) %>%
   mutate(
-    muestra = map(distr_eps,
+    muestra = future_map(distr_eps,
                   ayudante_generar_muestra,
                   generadores_x = generadores_x,
                   beta_pgd = beta_pgd,
@@ -129,7 +129,8 @@ ayudante_intervalo_conf <- function(fun_a, n_sim, distr_eps, n, met_int, alfa) {
       n_sim==n_sim,
       distr_eps==distr_eps
     )
-    llamada_lm <- lm(y ~ x1 + x2 + x3 +x4,data=muestra_a_evaluar[[1,'muestra']])
+  muestra <- muestra_a_evaluar[[1,'muestra']] %>% head(n)
+  llamada_lm <- lm(y ~ x1 + x2 + x3 +x4,data=muestra)
   intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm, metodo = met_int, alfa)
 }
 
@@ -147,15 +148,15 @@ intervalos <- muestras_puntuales %>%
     met_int = metodos_intervalo) %>%
   mutate(
     #atbeta es el valor del parámetro en el PGD.
-    atbeta = map_dbl(fun_a, function(i) funciones_a[[i]] %*% beta_pgd),
-    ic = pmap(
+    atbeta = future_map_dbl(fun_a, function(i) funciones_a[[i]] %*% beta_pgd),
+    ic = future_pmap( .progress = TRUE,
     # por acá voy, adaptar la llamada al adyudante nuevo
       list(fun_a, n_sim, distr_eps, n, met_int),
       ayudante_intervalo_conf,
       alfa = alfa),
-    cubre = map2_lgl(ic, atbeta, cubre),
-    ic_low = map_dbl(ic, 1),
-    ic_upp = map_dbl(ic, 2)
+    cubre = future_map2_lgl(ic, atbeta, cubre),
+    ic_low = future_map_dbl(ic, 1),
+    ic_upp = future_map_dbl(ic, 2)
     )
 
 # Guardamos la simulación
