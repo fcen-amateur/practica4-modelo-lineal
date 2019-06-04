@@ -99,10 +99,15 @@ muestras_maestras %>% write_rds("muestras_maestras.Rds")
 
 # El '-3' es poco legible, buscar cómo sustraer una columna por nombre.
 
-muestras_puntuales <- muestras_maestras[-3] %>%
-  crossing(
-    n = n_muestrales
-  )
+
+#para probar
+
+#muestras_puntuales <- muestras_maestras[-3] %>%
+#  crossing(
+#    n = n_muestrales
+#  )
+
+muestras_puntuales <- read_rds("muestras_puntuales.Rds")
 
 #muestras_puntuales <- muestras_maestras %>%
 #  crossing(n = n_muestrales) %>%
@@ -131,7 +136,7 @@ ayudante_intervalo_conf <- function(fun_a, n_sim, distr_eps, n, met_int, alfa) {
     )
   muestra <- muestra_a_evaluar[[1,'muestra']] %>% head(n)
   llamada_lm <- lm(y ~ x1 + x2 + x3 +x4,data=muestra)
-  intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm, metodo = met_int, alfa)
+  intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm, alfa=alfa, metodo = met_int)
 }
 
 #  Combinaciones lineales de beta_pgd a estimar (matriz A q*p de la teoría general).
@@ -151,9 +156,8 @@ intervalos <- muestras_puntuales %>%
     atbeta = future_map_dbl(fun_a, function(i) funciones_a[[i]] %*% beta_pgd),
     ic = future_pmap( .progress = TRUE,
     # por acá voy, adaptar la llamada al adyudante nuevo
-      list(fun_a, n_sim, distr_eps, n, met_int),
-      ayudante_intervalo_conf,
-      alfa = alfa),
+      list(fun_a, n_sim, distr_eps, n, met_int, alfa),
+      ayudante_intervalo_conf),
     cubre = future_map2_lgl(ic, atbeta, cubre),
     ic_low = future_map_dbl(ic, 1),
     ic_upp = future_map_dbl(ic, 2)
