@@ -4,7 +4,7 @@ author: "Gonzalo Barrera Borla y Octavio Martín Duarte "
 date: "5 de Junio de 2019"
 output:
   pdf_document:
-    latex_engine: xelatex
+#    latex_engine: xelatex
   html_document: default
 ---
 
@@ -300,8 +300,18 @@ intervalos %>%
 
 ## ¿Los Estimadores Tienen Distribución Normal?
 
+### Error con Distribución Exponencial, distribución estimada de $\beta_1$.
+
+
+```{r qq exponencial}
+intervalos %>%
+  filter(n_sim <= 50, is.element(n,c(10,100,1000,3000)),fun_a=='beta4',distr_eps == 'exponencial')  %>%
+  ggplot() + aes(sample =estimador, color = distr_eps) + geom_qq() + stat_qq_line() + facet_grid(n~.)
+```
+
+
 ```{r qqses por n y distr_eps}
 intervalos %>%
-  filter(n_sim <= 50, is.element(n,c(10,100,1000)),fun_a=='beta1')  %>%
-  ggplot() + aes(sample =estimador, color = distr_eps) + geom_qq() + stat_qq_line() + facet_grid(n~distr_eps, scales='free')
+  filter(n_sim <= 50, is.element(n,c(10,1000)),fun_a=='beta1')  %>%
+  ggplot() + aes(sample =estimador, color = distr_eps) + geom_qq() + stat_qq_line() + facet_grid(n~distr_eps)
 ```
