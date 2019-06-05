@@ -55,7 +55,7 @@ intervalo_conf <- function(a_vec, llamada_lm, alfa, metodo = "exacto") {
 
   n_muestra <- nrow(llamada_lm$model)
   r <- llamada_lm$rank
-  # Cualcul cuantil t o z, segun corresponda
+  # Cualculo cuantil t o z, segun corresponda
   if (metodo == "exacto") {
     cuantil <- qt(p = 1 - alfa/2, df = n_muestra - r)
   } else if (metodo == "asintotico") {
@@ -112,9 +112,9 @@ muestras_puntuales <- muestras_maestras[-3] %>%
 
 muestras_puntuales %>% write_rds("muestras_puntuales.Rds")
 
-ayudante_intervalo_conf <- function(fun_a, llamada_lm, met_int, alfa) {
- intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm, metodo = met_int, alfa)
-}
+## ayudante_intervalo_conf <- function(fun_a, llamada_lm, met_int, alfa) {
+##  intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm, metodo = met_int, alfa)
+## }
 
 #ayudante recibe el número de simulación, n y la distribución de epsilon. En base a eso elabora un intervalo con el método met_int de nivel 1- alfa.
 
@@ -124,20 +124,6 @@ ayudante_intervalo_conf <- function(n_simulacion, distr_epsilon, n, fun_a, met_i
   intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm=modelo, alfa=alfa, metodo = met_int)
 }
 
-
-                                        #para debug:
-mirarSimilares <- function(x) {
-  filter(x,
-         distr_eps=='normal',
-         n==10,
-         fun_a=='beta1',
-         met_int=='exacto'
-         )
-}
-
-debugear_ayudante <- function (x) ayudante_intervalo_conf(n_sim=x,distr_eps='lognormal',n=10,fun_a='beta1',met_int='exacto',alfa=0.1)
-
-parametrosAMirar <- c('n_sim','distr_eps','ic_upp','ic_low')
 
 #  Combinaciones lineales de beta_pgd a estimar (matriz A q*p de la teoría general).
 funciones_a <- list(
@@ -167,7 +153,7 @@ alfa <- 0.1
 
 #intervalos %>% write_rds("simulacion.Rds")
 
-intervalos <- read_rds("simulacion.Rds")
+intervalos <- read_rds("simulacion.csv")
 
 # Esto lo hice para probar que diera algo. Y da!
 sintesis <- intervalos %>%

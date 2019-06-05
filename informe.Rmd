@@ -355,10 +355,13 @@ intervalos %>%
 
 ### Algunas Observaciones Sobre Estos Patrones
 
-  Se ven varios fenómenos que aprecen dignos de interés pero no querríamos interpretar de forma trivial. 
-  Los incrementos tanto en el tamaño de muestra como en el número de repeticiones brindan en principio un incremento en el apego al valor de $\alfa$ para los intervalos asintóticos. Después de una cantidad de valores vemos que ambos se comportan en forma prácticamente indistinguible aunque es notable la precisión inicial del intervalo exacto. 
-  Es imposible incrementar nuestro apego en la tasa de acierto al alfa más allá de cierto nivel, de hecho en algunos casos observamos regresiones al incrementar el valor de $B$. 
-  Creemos que estas regresiones se deben a que en realidad el valor de esta proporción tiene un compotamiento oscilatorio y no realmente convergente respecto a $\alfa$. Probablemente para hacer un estudio completo de esta cuestión sea importante considerar también la longitud de los intervalos generados.  
+  Se ven varios fenómenos que aprecen dignos de interés pero no querríamos interpretar de forma trivial.
+  
+  Los incrementos tanto en el tamaño de muestra como en el número de repeticiones brindan en principio un incremento en el apego al valor de $\alpha$ para los intervalos asintóticos. Después de una cantidad de valores vemos que ambos se comportan en forma prácticamente indistinguible aunque es notable la precisión inicial del intervalo exacto. 
+  
+  Es imposible incrementar nuestro apego en la tasa de acierto al alfa más allá de cierto nivel, de hecho en algunos casos observamos regresiones al incrementar el valor de $B$. Estas regresiones son pequeñas, en la mayoría de los casos una vez que nos acercamos lo suficiente en la proporción de aciertos a $1-\alpha$ permanecemos ahí, pero en el gráfico se ven exageradas por la escala. Originalmente habíamos hecho un gráfico de tasa de aciertos en vez de tasa de errores y eran bastante difíciles de percibir.  
+  
+  En el caso de la distribución de Cauchy es tentador pensar que si bien no hay esperanza finita, hay una región que concentra la máxima densidad y por tanto define un intervalo de máxima probabilidad. La ausencia de esperanza es porque las colas no convergen a 0 con suficiente "rapidez" y eso nos va a afectar a la hora de estudiar cómo se portan los estimadores cuando el error tiene esta forma. El intervalo, en cambio, funciona razonablemente bien. 
 
 ## ¿Los Estimadores Tienen Distribución Normal?
 
@@ -391,10 +394,17 @@ intervalos %>%
   ggplot() + aes(sample =estimador, color = distr_eps) + geom_qq() + stat_qq_line() + facet_grid(n~distr_eps)
 ```
 
+#### Conclusiones sobre la Normalidad del Estimador
+
+  Como vemos, incrementando lo suficiente el valor de $n$ esta se termina manifestando rápidamente, aún cuando para el gráfico dejamos fijo el valor $B=50$, uno muy chico respecto a los totales que manejamos, de hasta 3.000. 
+  Por supuesto, este fenómeno no se presenta sólo en las distribuciones que cumplen las hipótesis del Teorema del Límite central. En ese sentido la inclusión de error con distribución $t_1$ nos permitió ver qué pasa cuando no es correcta la aproximación normal. En todos los casos observamos puntos que están drásticamente lejos de los cuantiles de la distribución normal.  
+ 
 # Conclusiones
 
   En general se observan varias tendencias. 
   
-  * Para todas las distribuciones obtuvimos mejores resultados con los intervalos exactos. 
-  * En casi todas al incrementar $n$ logramos llevar el nivel de los intervalos asintóticos prácticamente al de los exactos. 
-  * El único caso donde no pudimos lograr esto fue en la distribución de tipo $Cauchy$, $t_1$. Esto era esperable dado que esta distribución no tiene esperanza y por tanto no cumple las hipótesis del teorema del límite central. 
+* Para todas las distribuciones obtuvimos mejores resultados con los intervalos exactos. 
+* En casi todas al incrementar $n$ logramos llevar el nivel de los intervalos asintóticos prácticamente al de los exactos, a partir de ciertos tamaños se mueven a la par, es decir que estiman casi idénticamente. 
+* La única distribución del error que hizo que el estimador se comporte fuera de lo esperable fue la Cauchy, todas las pedidas por la consigna terminan por converger a un comportamiento asintóticamente normal. 
+* Sería interesante buscar conjuntos de datos que no vengan de distribuciones teóricas para ver si en ese caso los intervalos asintóticos se comportan mejor. 
+* Sería interesante hacer un estudio que contemple también la anchura de los intervalos. 
