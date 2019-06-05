@@ -1,0 +1,307 @@
+---
+title: "TP1, Modelo Lineal"
+author: "Gonzalo Barrera Borla y Octavio Martín Duarte "
+date: "5 de Junio de 2019"
+output:
+  pdf_document:
+    latex_engine: xelatex
+  html_document: default
+---
+
+# Consignas
+
+Escriba y entregue en un $script$ un programa de R que haga lo siguiente.
+
+## a) Fije la Semilla
+
+### i. Para $n=10$ genere $n$ datos $y_i$ que sigan el modelo lineal $y_i = 4+2 \cdot x_{i1} - 3 \cdot x_{i2} + 0,5 \cdot x_{i3} + {\varepsilon}_i$, $1 \leq i \leq n$ . Donde 
+
+* $x_{1i} \sim \mathcal{U}(-5,5) ,iid.$
+* $x_{2i} \sim \mathcal{U}(-5,5) ,iid.$
+* $x_{3i} \sim \mathcal{U}(-5,5) ,iid.$
+* $x_{4i} \sim \mathcal{U}(-5,5) ,iid.$
+* $\varepsilon_{1i} \sim \mathcal{E}(\lambda=1/2)-2 ,iid.$
+
+### ii. Ajuste el modelo $y_i = \beta_0+\beta_1 \cdot x_{i1} -\beta_{2} \cdot x_{i2} + \beta_{3} \cdot x_{i3} + \beta_{4} \cdot x_{i4} + u_i$
+
+### iii. Guarde los parámetros estimados.
+
+### iv. Construya el intervalo de confianza de nivel 0.90 para el parámetro $\beta_1$ y para el parámetro $\beta_4$ asumiendo normalidad de los errores. ¿Contienen estos intervalos a los verdaderos parámetros para la muestra simulada? Guarde en un nuevo objeto un uno si lo contiene, y un cero sino, para cada uno de los dos intervalos.
+### v. Construya el intervalo de confianza de nivel asintótico 0.90 para el parámetro $\beta_1$ y para el parámetro $\beta_4$. ¿Contienen estos intervalos a los verdaderos parámetros para la muestra simulada? Guarde en un nuevo objeto un 1 si lo contiene, y un cero sino, para cada uno de los dos intervalos.
+
+
+### vi. Repita los items a)i) hasta a)v) B = 1000 veces, de modo de tener una muestra de tamaño $B$ de los estimadores de cada $\beta_j$. ¿Diría que la distribución on de los estimadores de $\beta_2$ puede aproximarse por la normal? Haga gráficos que le permitan tomar esta decisión. ¿Qué proporción de los $B$ intervalos calculados para $\beta_1$ y $\beta_4$ basados en una muestra de $n$ observaciones contuvo al verdadero valor del parámetro? Responda para cada tipo de intervalo calculado.
+
+## b) Repita $a$ para $n=25$ y $n=100$.
+
+
+## c) Repita $a$ y $b$ para el caso de tener errores con distribución $Lognormal(\mu,\sigma^2)-e^{\mu+{\sigma^2}/2}$, tomando $\mu=0$ y $\sigma^2=1$. Si para alguna de las distribuciones no consigue convencerse de que los $\hat{\beta}$ tienen distribución que puede ser aproximada por una normal, repita para errores generados con esta distribución en el esquenma de simulación anterior pero con $n=250,500,1000,15000,2000,3000$. Exhiba los resultados en una tabla y comente brevemente sus conclusiones.
+
+## d) Repita $c$ pero ahora con la distribución de errores $\mathcal{U}(-3;3)$ y con ${\chi^2}_k -k$ con $k=3$  y $t_k$ con $k=3$.
+
+# Desarrollo 
+
+## Método Empleado
+
+  Dado que se solicita muchas repeticiones de consignas similares variando ciertos parámetros, comenzamos por elaborar una gran cantidad de simulaciones con todas las distribuciones contempladas para el error (y algunas de nuestra añadidura) con la máxima cantidad de repeticiones y el máximo número de muestras por simulación. Después vamos a ir acudiendo a ellas para tomar subconjuntos. Esto lo hicimos trivialmente y sin remuestrear, tomando los primeros $n$ elementos de cada simulación dado que como estas son efectivamente simulaciones de procesos aleatorios no nos pareció que el remuestreo fuera crítico a nuestros fines.
+
+  Dejamos una serie de parámetros que permitirían generalizar aún más la simulación, el modelo del proceso generador de datos `beta_pgd`, el conjunto de `n` adoptados, la cantidad de simulaciones `n_sim`, etc.
+
+  Dado que esta tabla y la siguiente involucran cantidades nada despreciables de cálculos, acá adjuntamos una versión del código similar a la usada pero parametrizada para muchas menos repeticiones, al lado aparecen comentados los verdaderos vectores que se usaron.
+  
+#### Parámetros
+
+```{r preámbulos}
+
+library('tidyverse')
+library('stats')
+library('future')
+library('furrr')
+library('knitr')
+set.seed(42)
+
+# Coeficientes "platonicos" (i.e., del proceso generador de datos)
+beta_pgd <- c(4, 2, -3, 0.5, 0)
+
+metodos_intervalo <- c("asintotico", "exacto")
+alfa <- 0.1
+
+# Funciones generadoras de x_i
+generadores_x <- list(
+    "x1" = function(n) { runif(n, min=-5, max=5) },
+    "x2" = function(n) { runif(n, min=-5, max=5) },
+    "x3" = function(n) { runif(n, min=-5, max=5) },
+    "x4" = function(n) { runif(n, min=-5, max=5) }
+)
+
+generadores_eps <- list(
+  "normal" = function(n) { rnorm(n) },
+  "exponencial" = function(n) { rexp(n, rate = 1/2) - 2 },
+  "lognormal" = function(n) { exp(rnorm(n) - exp(0.5))  },
+  "uniforme" = function(n) { runif(n, -3, 3) },
+  "chi_cuadrado" = function(n) { rchisq(n, 3) - 3 },
+  "student1" = function(n) { rt(n, 1) },
+  "student3" = function(n) { rt(n, 3) }
+)
+
+funciones_a <- list(
+  beta1 = c(0, 1, 0, 0, 0),
+  beta4 = c(0, 0, 0, 0, 1)
+)
+
+generador_y <- function(x1, x2, x3, x4, beta_pgd, eps, ...)   {
+  c(1, x1, x2, x3, x4) %*% beta_pgd + eps
+}
+```
+
+#### Obtención de la muestra.
+
+Para el vector con todos los valores de $n$, el conjunto de muestras pesa 3GB. Por esta razón, optamos por trabajar con otra tabla que acude a la tabla con las muestras cuando son necesarias y toma los datos pedidos para hallar los intervalos. 
+Pusimos la salida de ambos tibble mostrando su forma, `muestras_maestras` es el conjunto de las muestras y `muestras_puntuales` conserva sólo la información necesaria para buscar en la tabla más grande. 
+
+```{r muestra}
+generar_muestra <- function(n, generadores_x, generador_eps, beta_pgd) {
+  # Tibble vacio
+  df <- tibble(.rows = n)
+  # Genero variables regresoras y errores
+  for (nombre in names(generadores_x)) {
+    if (nombre != "y") {
+      df[nombre] <- generadores_x[[nombre]](n)
+    }
+  df$eps <- generador_eps(n)
+  }
+  # Genero y
+  df["y"] <- pmap_dbl(df, generador_y, beta_pgd=beta_pgd)
+
+  return(df)
+}
+
+ayudante_generar_muestra <- function(distr_eps, generadores_x, beta_pgd, n) {
+  generar_muestra(n,generadores_x, generadores_eps[[distr_eps]],beta_pgd=beta_pgd)
+}
+
+
+n_muestrales <- c(10, 25)
+#n_muestrales <- c(10, 25, 100, 250, 500, 1000, 1500, 2000, 3000)
+
+max_n_muestral <- max(n_muestrales)
+n_sims <- 1000
+muestras_maestras <- crossing(
+  n_sim = seq(max_n_muestral),
+  distr_eps = names(generadores_eps)) %>%
+  mutate(
+    muestra = future_map(.progress=TRUE,
+                  distr_eps,
+                  ayudante_generar_muestra,
+                  generadores_x = generadores_x,
+                  beta_pgd = beta_pgd,
+                  n = max_n_muestral)
+  )
+
+muestras_maestras
+
+#El '-3' es poco legible, buscar cómo sustraer una columna por nombre.
+
+muestras_puntuales <- muestras_maestras[-3] %>%
+  crossing(
+    n = n_muestrales
+  )
+
+muestras_puntuales
+```
+
+## Intervalos
+
+
+Para obtener los intervalos, usamos los parámetros que tiene guardada cada fila de `muestras_puntuales` y ejecutamos una función que lee en `muestras_maestras` de acuerdo a estos.
+
+```{r obtención de los intervalos}
+intervalo_conf <- function(a_vec, llamada_lm, alfa, metodo = "exacto") {
+
+  betahat <- llamada_lm$coefficients
+  # Matriz de covarianza estimada para los coeficientes
+  Sigmahat <- vcov(llamada_lm)
+
+  n_muestra <- nrow(llamada_lm$model)
+  r <- llamada_lm$rank
+  # Cualculo cuantil t o z, segun corresponda
+  if (metodo == "exacto") {
+    cuantil <- qt(p = 1 - alfa/2, df = n_muestra - r)
+  } else if (metodo == "asintotico") {
+    cuantil <- qnorm(p = 1 - alfa/2)
+  } else {
+    stop("Los unicos metodos soportados son 'exacto' y 'asintotico'")
+  }
+
+  centro <- t(a_vec)%*%betahat
+  delta <- cuantil * sqrt(t(a_vec) %*% Sigmahat %*% a_vec)
+  return(c(centro - delta, centro + delta))
+}
+
+cubre <- function(intervalo, valor) { intervalo[1] <= valor & intervalo[2] >= valor}
+
+ayudante_intervalo_conf <- function(n_simulacion, distr_epsilon, n, fun_a, met_int, alfa) {
+  muestra_a_evaluar <- (muestras_maestras %>% filter(n_sim==n_simulacion,distr_eps==distr_epsilon))[[1,'muestra']] %>% head(n)
+  modelo <- lm(y ~ x1 + x2 + x3 +x4,data=muestra_a_evaluar)
+  intervalo_conf(a_vec = funciones_a[[fun_a]], llamada_lm=modelo, alfa=alfa, metodo = met_int)
+}
+
+intervalos <- muestras_puntuales %>%
+  crossing(
+    fun_a = names(funciones_a),
+    met_int = metodos_intervalo) %>%
+  mutate(
+    #atbeta es el valor del parámetro en el PGD.
+    atbeta = map_dbl(fun_a, function(i) funciones_a[[i]] %*% beta_pgd),
+    ic = future_pmap( .progress = TRUE,
+      list(n_sim, distr_eps, n, fun_a, met_int),
+      ayudante_intervalo_conf,
+      alfa = alfa),
+    cubre = map2_lgl(ic, atbeta, cubre),
+    ic_low = map_dbl(ic, 1),
+    ic_upp = map_dbl(ic, 2)
+    )
+```
+
+
+
+# Respuestas
+
+```{r tabla grande}
+
+intervalos <- read_rds("simulacion.Rds") %>%
+  mutate(
+    estimador = (ic_upp+ic_low)/2
+  )
+```
+
+## ¿Los intervalos Cubren a los Parámetros?
+
+Respondemos directamente para todas las distribuciones estudiadas, con muestras de diez iteraciones.
+
+### Para $B=1000$ y $n=10$
+
+```{r cubren n10 b1000}
+sintesis <- intervalos %>%
+  filter(n_sim<=1000) %>%
+  group_by(distr_eps, n, met_int, fun_a) %>%
+  summarise(prop_cubre = mean(cubre))
+
+sintesis %>%
+  filter(n==10)  %>%
+kable()
+```
+
+Observamos que para muestras pequeñas, con $n=10$, es usual que los intervalos asintóticos no lleguen a cubrir los parámetros. En varios casos incluido el exponencial nuestra media de aciertos está por debajo del $\alpha$ establecido.
+Esto no mejora incrementando las repeticiones hasta 3.000 .
+
+### Para $B=3000$ y $n=10$
+
+```{r cubren n10 b3000}
+sintesis <- intervalos %>%
+  group_by(distr_eps, n, met_int, fun_a) %>%
+  summarise(prop_cubre = mean(cubre))
+
+sintesis %>%
+  filter(n==10)  %>%
+kable()
+```
+
+Veamos en qué casos no estamos logrando cubrir el valor real del parámetro. 
+
+
+```{r no cubre 10 3000}
+
+sintesis %>%
+  filter(n==10,prop_cubre<0.9) %>%
+  kable()
+```
+
+
+### Para $B=3000$ y $n=25$
+
+```{r cubren n25 b3000}
+
+sintesis %>%
+  filter(n==25)  %>%
+kable()
+```
+
+### Para $B=3000$ y $n=100$
+
+```{r cubren n100 b3000}
+
+sintesis %>%
+  filter(n==100)  %>%
+kable()
+```
+
+Veamos en qué casos no estamos logrando cubrir el valor real del parámetro. 
+Vamos además a hacer un gráfico que compare cómo evoluciona nuestra media de intervalos que cubren en cada distribución del error de acuerdo al parámetro $n$.
+
+
+```{r no cubre 100 3000}
+sintesis %>%
+  filter(n==100,prop_cubre<0.9)  %>%
+kable()
+```
+
+  Se observa un incremento significativo en todas las tendencias a cubrir el valor real.
+  Ninguno de `prop_cubre` está ahora drásticamente lejos del nivel deseado y cabe esperar lograr este con un nuevo incremento de $n$.
+
+```{r intervalos exponenciales que cubren}
+intervalos %>%
+  filter(distr_eps=='exponencial',cubre==FALSE, n<=3000, n_sim <= 3000) %>%
+  ggplot(aes(x = met_int, y=..count../sum(..count..) , fill=n, color = met_int)) +
+    geom_bar() +
+    facet_grid(fun_a~n)
+```
+
+
+## ¿Los Estimadores Tienen Distribución Normal?
+
+```{r qqses por n y distr_eps}
+intervalos %>%
+  filter(n_sim <= 50, is.element(n,c(10,100,1000)),fun_a=='beta1')  %>%
+  ggplot() + aes(sample =estimador, color = distr_eps) + geom_qq() + stat_qq_line() + facet_grid(n~distr_eps, scales='free')
+```
