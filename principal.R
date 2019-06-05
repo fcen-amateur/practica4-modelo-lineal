@@ -4,6 +4,8 @@ library('future')
 library('furrr')
 set.seed(42)
 
+#setwd("/mnt/Datos/")
+
 # Coeficientes "platonicos" (i.e., del proceso generador de datos)
 beta_pgd <- c(4, 2, -3, 0.5, 0)
 
@@ -76,27 +78,29 @@ ayudante_generar_muestra <- function(distr_eps, generadores_x, beta_pgd, n) {
 
 #Pasamos a modo multihilo porque se vienen cálculos feos
 
-plan(multiprocess)
 future.globals.maxSize = '+inf'
 
 
-n_muestrales <- c(10, 25, 100)
-#n_muestrales <- c(10, 25, 100, 250, 500, 1000, 1500, 2000, 3000)
-max_n_muestral <- max(n_muestrales)
-n_sims <- 5
-muestras_maestras <- crossing(
-  n_sim = seq(max_n_muestral),
-  distr_eps = names(generadores_eps)) %>%
-  mutate(
-    muestra = future_map(distr_eps,
-                  ayudante_generar_muestra,
-                  generadores_x = generadores_x,
-                  beta_pgd = beta_pgd,
-                  n = max_n_muestral)
-  )
+#n_muestrales <- c(10, 25, 100)
+n_muestrales <- c(10, 25, 100, 250, 500, 1000, 1500, 2000, 3000)
+## max_n_muestral <- max(n_muestrales)
+## n_sims <- 1000
+## muestras_maestras <- crossing(
+##   n_sim = seq(max_n_muestral),
+##   distr_eps = names(generadores_eps)) %>%
+##   mutate(
+##     muestra = future_map(.progress=TRUE,
+##                   distr_eps,
+##                   ayudante_generar_muestra,
+##                   generadores_x = generadores_x,
+##                   beta_pgd = beta_pgd,
+##                   n = max_n_muestral)
+##   )
 
-muestras_maestras %>% write_rds("muestras_maestras.Rds")
+#muestras_maestras %>% write_rds("muestras_maestras.Rds")
 
+
+muestras_maestras <- read_rds("muestras_maestras.Rds")
 
 # El '-3' es poco legible, buscar cómo sustraer una columna por nombre.
 
@@ -143,25 +147,27 @@ funciones_a <- list(
 
 metodos_intervalo <- c("asintotico", "exacto")
 alfa <- 0.1
-intervalos <- muestras_puntuales %>%
-  crossing(
-    fun_a = names(funciones_a),
-    met_int = metodos_intervalo) %>%
-  mutate(
-    #atbeta es el valor del parámetro en el PGD.
-    atbeta = map_dbl(fun_a, function(i) funciones_a[[i]] %*% beta_pgd),
-    ic = future_pmap( .progress = TRUE,
-      list(n_sim, distr_eps, n, fun_a, met_int),
-      ayudante_intervalo_conf,
-      alfa = alfa),
-    cubre = map2_lgl(ic, atbeta, cubre),
-    ic_low = map_dbl(ic, 1),
-    ic_upp = map_dbl(ic, 2)
-    )
+## intervalos <- muestras_puntuales %>%
+##   crossing(
+##     fun_a = names(funciones_a),
+##     met_int = metodos_intervalo) %>%
+##   mutate(
+##     #atbeta es el valor del parámetro en el PGD.
+##     atbeta = map_dbl(fun_a, function(i) funciones_a[[i]] %*% beta_pgd),
+##     ic = future_pmap( .progress = TRUE,
+##       list(n_sim, distr_eps, n, fun_a, met_int),
+##       ayudante_intervalo_conf,
+##       alfa = alfa),
+##     cubre = map2_lgl(ic, atbeta, cubre),
+##     ic_low = map_dbl(ic, 1),
+##     ic_upp = map_dbl(ic, 2)
+##     )
 
 # Guardamos la simulación
 
-intervalos %>% write_rds("simulacion.csv")
+#intervalos %>% write_rds("simulacion.Rds")
+
+intervalos <- read_rds("simulacion.Rds")
 
 # Esto lo hice para probar que diera algo. Y da!
 sintesis <- intervalos %>%
