@@ -3,7 +3,7 @@ title: "TP1, Modelo Lineal"
 author: "Gonzalo Barrera Borla y Octavio Martín Duarte "
 date: "5 de Junio de 2019"
 output:
-  pdf_document:
+#  pdf_document:
 #    latex_engine: xelatex
   html_document: default
 ---
@@ -58,6 +58,7 @@ library('stats')
 library('future')
 library('furrr')
 library('knitr')
+library('kableExtra')
 set.seed(42)
 
 # Coeficientes "platonicos" (i.e., del proceso generador de datos)
@@ -217,91 +218,157 @@ intervalos <- read_rds("simulacion.Rds") %>%
 
 ## ¿Los intervalos Cubren a los Parámetros?
 
-Respondemos directamente para todas las distribuciones estudiadas, con muestras de diez iteraciones.
+Respondemos directamente para todas las distribuciones estudiadas.
 
-### Para $B=1000$ y $n=10$
+### Para $B=1$ y, es decir si el primer intento de obtener el intervalo cubre el valor.
 
-```{r cubren n10 b1000}
+```{r cubren  b1}
+sintesis <- intervalos %>%
+  filter(n_sim==1) %>%
+  group_by(distr_eps, n, met_int, fun_a) %>%
+  summarise(prop_cubre = mean(cubre))
+
+sintesis %>%
+  mutate (
+    prop_cubre = round(digits=4,x=prop_cubre),
+    prop_cubre = cell_spec(prop_cubre,"html",
+                           color = ifelse(prop_cubre < 0.89,"red","blue"),
+                           background = ifelse(prop_cubre < 0.86,"gray","white")
+                           )
+  ) %>%
+  spread(n,prop_cubre) %>%
+  kable(format="html", escape = F, label="Proporción Cubierta por los intervalos, por tamaño n.") %>%
+  kable_styling("condensed", "striped") %>%
+  add_header_above(c(" "=3,"valores de n"=9))
+```
+
+
+### Para $B=1000$ 
+
+
+```{r cubren  b1000}
 sintesis <- intervalos %>%
   filter(n_sim<=1000) %>%
   group_by(distr_eps, n, met_int, fun_a) %>%
   summarise(prop_cubre = mean(cubre))
 
 sintesis %>%
-  filter(n==10)  %>%
-kable()
+  mutate (
+    prop_cubre = round(digits=4,x=prop_cubre),
+    prop_cubre = cell_spec(prop_cubre,"html",
+                           color = ifelse(prop_cubre < 0.89,"red","blue"),
+                           background = ifelse(prop_cubre < 0.86,"gray","white")
+                           )
+  ) %>%
+  spread(n,prop_cubre) %>%
+  kable(format="html", escape = F, label="Proporción Cubierta por los intervalos, por tamaño n.") %>%
+  kable_styling("condensed", "striped") %>%
+  add_header_above(c(" "=3,"valores de n"=9))
 ```
 
-Observamos que para muestras pequeñas, con $n=10$, es usual que los intervalos asintóticos no lleguen a cubrir los parámetros. En varios casos incluido el exponencial nuestra media de aciertos está por debajo del $\alpha$ establecido.
-Esto no mejora incrementando las repeticiones hasta 3.000 .
+### Para $B=3000$
 
-### Para $B=3000$ y $n=10$
-
-```{r cubren n10 b3000}
+```{r cubren  b3000}
 sintesis <- intervalos %>%
   group_by(distr_eps, n, met_int, fun_a) %>%
   summarise(prop_cubre = mean(cubre))
 
 sintesis %>%
-  filter(n==10)  %>%
-kable()
+  mutate (
+    prop_cubre = round(digits=4,x=prop_cubre),
+    prop_cubre = cell_spec(prop_cubre,"html",
+                           color = ifelse(prop_cubre < 0.89,"red","blue"),
+                           background = ifelse(prop_cubre < 0.86,"gray","white")
+                           )
+  ) %>%
+  spread(n,prop_cubre) %>%
+  kable(format="html", escape = F, label="Proporción Cubierta por los intervalos, por tamaño n.") %>%
+  kable_styling("condensed", "striped") %>%
+  add_header_above(c(" "=3,"valores de n"=9))
 ```
 
-Veamos en qué casos no estamos logrando cubrir el valor real del parámetro. 
+Observamos que para muestras pequeñas, con $n=10$, es usual que los intervalos asintóticos no lleguen a cubrir los parámetros. En varios casos incluido el exponencial nuestra media de aciertos está por debajo del $\alpha$ establecido.
+Esto no mejora incrementando las repeticiones hasta 3.000, es decir que probablemente ya estábamos cerca de su límite.
 
+### Gráficos de las Proporciones de no Cubrimiento por Distribución
 
-```{r no cubre 10 3000}
+En este gráfico mostramos en columnas paralelas la proporción de casos donde no se cubrió el parámetro por método y por tamaño de muestra para cada variable considerada. 
 
-sintesis %>%
-  filter(n==10,prop_cubre<0.9) %>%
-  kable()
-```
+#### Proporción de Parámetros no Cubiertos para el Error Exponencial
 
-
-### Para $B=3000$ y $n=25$
-
-```{r cubren n25 b3000}
-
-sintesis %>%
-  filter(n==25)  %>%
-kable()
-```
-
-### Para $B=3000$ y $n=100$
-
-```{r cubren n100 b3000}
-
-sintesis %>%
-  filter(n==100)  %>%
-kable()
-```
-
-Veamos en qué casos no estamos logrando cubrir el valor real del parámetro. 
-Vamos además a hacer un gráfico que compare cómo evoluciona nuestra media de intervalos que cubren en cada distribución del error de acuerdo al parámetro $n$.
-
-
-```{r no cubre 100 3000}
-sintesis %>%
-  filter(n==100,prop_cubre<0.9)  %>%
-kable()
-```
-
-  Se observa un incremento significativo en todas las tendencias a cubrir el valor real.
-  Ninguno de `prop_cubre` está ahora drásticamente lejos del nivel deseado y cabe esperar lograr este con un nuevo incremento de $n$.
 
 ```{r intervalos exponenciales que cubren}
 intervalos %>%
-  filter(distr_eps=='exponencial',cubre==FALSE, n<=3000, n_sim <= 3000) %>%
+  filter(distr_eps=='exponencial',cubre==FALSE, n_sim <= 1000) %>%
   ggplot(aes(x = met_int, y=..count../sum(..count..) , fill=n, color = met_int)) +
     geom_bar() +
     facet_grid(fun_a~n)
 ```
 
+#### Proporción de Parámetros no Cubiertos para el Error Lognormal
+
+```{r intervalos lognormales que cubren}
+intervalos %>%
+  filter(distr_eps=='lognormal',cubre==FALSE, n_sim <= 1000) %>%
+  ggplot(aes(x = met_int, y=..count../sum(..count..) , fill=n, color = met_int)) +
+    geom_bar() +
+    facet_grid(fun_a~n)
+```
+
+#### Proporción de Parámetros no Cubiertos para el Error Uniforme
+
+```{r intervalos uniformes que cubren}
+intervalos %>%
+  filter(distr_eps=='uniforme',cubre==FALSE, n_sim <= 1000) %>%
+  ggplot(aes(x = met_int, y=..count../sum(..count..) , fill=n, color = met_int)) +
+    geom_bar() +
+    facet_grid(fun_a~n)
+```
+
+#### Proporción de Parámetros no Cubiertos para el Error Chi Cuadrado
+
+```{r intervalos chi que cubren}
+intervalos %>%
+  filter(distr_eps=='chi_cuadrado',cubre==FALSE, n_sim <= 1000) %>%
+  ggplot(aes(x = met_int, y=..count../sum(..count..) , fill=n, color = met_int)) +
+    geom_bar() +
+    facet_grid(fun_a~n)
+```
+
+#### Proporción de Parámetros no Cubiertos para el Error T 
+
+```{r intervalos T que cubren}
+intervalos %>%
+  filter(distr_eps=='student3',cubre==FALSE, n_sim <= 1000) %>%
+  ggplot(aes(x = met_int, y=..count../sum(..count..) , fill=n, color = met_int)) +
+    geom_bar() +
+    facet_grid(fun_a~n)
+```
+
+#### Proporción de Parámetros no Cubiertos para el Cauchy
+
+```{r intervalos cauchy que cubren}
+intervalos %>%
+  filter(distr_eps=='student1',cubre==FALSE, n_sim <= 1000) %>%
+  ggplot(aes(x = met_int, y=..count../sum(..count..) , fill=n, color = met_int)) +
+    geom_bar() +
+    facet_grid(fun_a~n)
+```
+
+### Algunas Observaciones Sobre Estos Patrones
+
+  Se ven varios fenómenos que aprecen dignos de interés pero no querríamos interpretar de forma trivial. 
+  Los incrementos tanto en el tamaño de muestra como en el número de repeticiones brindan en principio un incremento en el apego al valor de $\alfa$ para los intervalos asintóticos. Después de una cantidad de valores vemos que ambos se comportan en forma prácticamente indistinguible aunque es notable la precisión inicial del intervalo exacto. 
+  Es imposible incrementar nuestro apego en la tasa de acierto al alfa más allá de cierto nivel, de hecho en algunos casos observamos regresiones al incrementar el valor de $B$. 
+  Creemos que estas regresiones se deben a que en realidad el valor de esta proporción tiene un compotamiento oscilatorio y no realmente convergente respecto a $\alfa$. Probablemente para hacer un estudio completo de esta cuestión sea importante considerar también la longitud de los intervalos generados.  
 
 ## ¿Los Estimadores Tienen Distribución Normal?
 
-### Error con Distribución Exponencial, distribución estimada de $\beta_1$.
+### Normalidad de $\hat{\beta}_4$ cuando el error es exponencial.
 
+El siguiente gráfico nos muestra el gráfico QQ para el parámetro $\hat{\beta}_4$ y su evolución al incrementar la cantidad de muestras $n$.
+
+El mismo tiene una escala fija para que tenga sentido la comparación gráfica.
 
 ```{r qq exponencial}
 intervalos %>%
@@ -309,9 +376,27 @@ intervalos %>%
   ggplot() + aes(sample =estimador, color = distr_eps) + geom_qq() + stat_qq_line() + facet_grid(n~.)
 ```
 
+  Es interesante observar qué pasa si vamos reduciendo la escala también: El patrón de distancia a la recta de los cuantiles ideales se mantiene similar, aunque estas se ven reducidas hasta tal punto que en el otro gráfico donde mantenemos la escala constante parecen adherirse a ella.
+  Pareciera observarse el efecto aritmético de dividir por $n$, manteniéndose la relación de aspecto entre las distancias.
+
+```{r qq exponencial libre}
+intervalos %>%
+  filter(n_sim <= 50, is.element(n,c(10,100,1000,3000)),fun_a=='beta4',distr_eps == 'exponencial')  %>%
+  ggplot() + aes(sample =estimador, color = distr_eps) + geom_qq() + stat_qq_line() + facet_grid(n~., scales="free")
+```
+
+### Normalidad de $\hat{\beta}_4$ para los diversos errores según $n$.
 
 ```{r qqses por n y distr_eps}
 intervalos %>%
-  filter(n_sim <= 50, is.element(n,c(10,1000)),fun_a=='beta1')  %>%
+  filter(n_sim <= 50, is.element(n,c(10,100,1000,3000)),fun_a=='beta1')  %>%
   ggplot() + aes(sample =estimador, color = distr_eps) + geom_qq() + stat_qq_line() + facet_grid(n~distr_eps)
 ```
+
+# Conclusiones
+
+  En general se observan varias tendencias. 
+  
+  * Para todas las distribuciones obtuvimos mejores resultados con los intervalos exactos. 
+  * En casi todas al incrementar $n$ logramos llevar el nivel de los intervalos asintóticos prácticamente al de los exactos. 
+  * El único caso donde no pudimos lograr esto fue en la distribución de tipo $Cauchy$, $t_1$. Esto era esperable dado que esta distribución no tiene esperanza y por tanto no cumple las hipótesis del teorema del límite central. 
