@@ -1,0 +1,1021 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={TP1, Modelo Lineal},
+            pdfauthor={Gonzalo Barrera Borla y Octavio Martín Duarte},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{TP1, Modelo Lineal}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Gonzalo Barrera Borla y Octavio Martín Duarte}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{5 de Junio de 2019}
+
+
+\begin{document}
+\maketitle
+
+\hypertarget{consignas}{%
+\section{Consignas}\label{consignas}}
+
+Escriba y entregue en un \(script\) un programa de R que haga lo
+siguiente.
+
+\hypertarget{a-fije-la-semilla}{%
+\subsection{a) Fije la Semilla}\label{a-fije-la-semilla}}
+
+\hypertarget{i.-para-n10-genere-n-datos-y_i-que-sigan-el-modelo-lineal-y_i-42-cdot-x_i1---3-cdot-x_i2-05-cdot-x_i3-varepsilon_i-1-leq-i-leq-n-.-donde}{%
+\subsubsection{\texorpdfstring{i. Para \(n=10\) genere \(n\) datos
+\(y_i\) que sigan el modelo lineal
+\(y_i = 4+2 \cdot x_{i1} - 3 \cdot x_{i2} + 0,5 \cdot x_{i3} + {\varepsilon}_i\),
+\(1 \leq i \leq n\) .
+Donde}{i. Para n=10 genere n datos y\_i que sigan el modelo lineal y\_i = 4+2 \textbackslash cdot x\_\{i1\} - 3 \textbackslash cdot x\_\{i2\} + 0,5 \textbackslash cdot x\_\{i3\} + \{\textbackslash varepsilon\}\_i, 1 \textbackslash leq i \textbackslash leq n . Donde}}\label{i.-para-n10-genere-n-datos-y_i-que-sigan-el-modelo-lineal-y_i-42-cdot-x_i1---3-cdot-x_i2-05-cdot-x_i3-varepsilon_i-1-leq-i-leq-n-.-donde}}
+
+\begin{itemize}
+\tightlist
+\item
+  \(x_{1i} \sim \mathcal{U}(-5,5) ,iid.\)
+\item
+  \(x_{2i} \sim \mathcal{U}(-5,5) ,iid.\)
+\item
+  \(x_{3i} \sim \mathcal{U}(-5,5) ,iid.\)
+\item
+  \(x_{4i} \sim \mathcal{U}(-5,5) ,iid.\)
+\item
+  \(\varepsilon_{1i} \sim \mathcal{E}(\lambda=1/2)-2 ,iid.\)
+\end{itemize}
+
+\hypertarget{ii.-ajuste-el-modelo-y_i-beta_0beta_1-cdot-x_i1--beta_2-cdot-x_i2-beta_3-cdot-x_i3-beta_4-cdot-x_i4-u_i}{%
+\subsubsection{\texorpdfstring{ii. Ajuste el modelo
+\(y_i = \beta_0+\beta_1 \cdot x_{i1} -\beta_{2} \cdot x_{i2} + \beta_{3} \cdot x_{i3} + \beta_{4} \cdot x_{i4} + u_i\)}{ii. Ajuste el modelo y\_i = \textbackslash beta\_0+\textbackslash beta\_1 \textbackslash cdot x\_\{i1\} -\textbackslash beta\_\{2\} \textbackslash cdot x\_\{i2\} + \textbackslash beta\_\{3\} \textbackslash cdot x\_\{i3\} + \textbackslash beta\_\{4\} \textbackslash cdot x\_\{i4\} + u\_i}}\label{ii.-ajuste-el-modelo-y_i-beta_0beta_1-cdot-x_i1--beta_2-cdot-x_i2-beta_3-cdot-x_i3-beta_4-cdot-x_i4-u_i}}
+
+\hypertarget{iii.-guarde-los-parametros-estimados.}{%
+\subsubsection{iii. Guarde los parámetros
+estimados.}\label{iii.-guarde-los-parametros-estimados.}}
+
+\hypertarget{iv.-construya-el-intervalo-de-confianza-de-nivel-0.90-para-el-parametro-beta_1-y-para-el-parametro-beta_4-asumiendo-normalidad-de-los-errores.-contienen-estos-intervalos-a-los-verdaderos-parametros-para-la-muestra-simulada-guarde-en-un-nuevo-objeto-un-uno-si-lo-contiene-y-un-cero-sino-para-cada-uno-de-los-dos-intervalos.}{%
+\subsubsection{\texorpdfstring{iv. Construya el intervalo de confianza
+de nivel 0.90 para el parámetro \(\beta_1\) y para el parámetro
+\(\beta_4\) asumiendo normalidad de los errores. ¿Contienen estos
+intervalos a los verdaderos parámetros para la muestra simulada? Guarde
+en un nuevo objeto un uno si lo contiene, y un cero sino, para cada uno
+de los dos
+intervalos.}{iv. Construya el intervalo de confianza de nivel 0.90 para el parámetro \textbackslash beta\_1 y para el parámetro \textbackslash beta\_4 asumiendo normalidad de los errores. ¿Contienen estos intervalos a los verdaderos parámetros para la muestra simulada? Guarde en un nuevo objeto un uno si lo contiene, y un cero sino, para cada uno de los dos intervalos.}}\label{iv.-construya-el-intervalo-de-confianza-de-nivel-0.90-para-el-parametro-beta_1-y-para-el-parametro-beta_4-asumiendo-normalidad-de-los-errores.-contienen-estos-intervalos-a-los-verdaderos-parametros-para-la-muestra-simulada-guarde-en-un-nuevo-objeto-un-uno-si-lo-contiene-y-un-cero-sino-para-cada-uno-de-los-dos-intervalos.}}
+
+\hypertarget{v.-construya-el-intervalo-de-confianza-de-nivel-asintotico-0.90-para-el-parametro-beta_1-y-para-el-parametro-beta_4.-contienen-estos-intervalos-a-los-verdaderos-parametros-para-la-muestra-simulada-guarde-en-un-nuevo-objeto-un-1-si-lo-contiene-y-un-cero-sino-para-cada-uno-de-los-dos-intervalos.}{%
+\subsubsection{\texorpdfstring{v. Construya el intervalo de confianza de
+nivel asintótico 0.90 para el parámetro \(\beta_1\) y para el parámetro
+\(\beta_4\). ¿Contienen estos intervalos a los verdaderos parámetros
+para la muestra simulada? Guarde en un nuevo objeto un 1 si lo contiene,
+y un cero sino, para cada uno de los dos
+intervalos.}{v. Construya el intervalo de confianza de nivel asintótico 0.90 para el parámetro \textbackslash beta\_1 y para el parámetro \textbackslash beta\_4. ¿Contienen estos intervalos a los verdaderos parámetros para la muestra simulada? Guarde en un nuevo objeto un 1 si lo contiene, y un cero sino, para cada uno de los dos intervalos.}}\label{v.-construya-el-intervalo-de-confianza-de-nivel-asintotico-0.90-para-el-parametro-beta_1-y-para-el-parametro-beta_4.-contienen-estos-intervalos-a-los-verdaderos-parametros-para-la-muestra-simulada-guarde-en-un-nuevo-objeto-un-1-si-lo-contiene-y-un-cero-sino-para-cada-uno-de-los-dos-intervalos.}}
+
+\hypertarget{vi.-repita-los-items-ai-hasta-av-b-1000-veces-de-modo-de-tener-una-muestra-de-tamano-b-de-los-estimadores-de-cada-beta_j.-diria-que-la-distribucion-on-de-los-estimadores-de-beta_2-puede-aproximarse-por-la-normal-haga-graficos-que-le-permitan-tomar-esta-decision.-que-proporcion-de-los-b-intervalos-calculados-para-beta_1-y-beta_4-basados-en-una-muestra-de-n-observaciones-contuvo-al-verdadero-valor-del-parametro-responda-para-cada-tipo-de-intervalo-calculado.}{%
+\subsubsection{\texorpdfstring{vi. Repita los items a)i) hasta a)v) B =
+1000 veces, de modo de tener una muestra de tamaño \(B\) de los
+estimadores de cada \(\beta_j\). ¿Diría que la distribución on de los
+estimadores de \(\beta_2\) puede aproximarse por la normal? Haga
+gráficos que le permitan tomar esta decisión. ¿Qué proporción de los
+\(B\) intervalos calculados para \(\beta_1\) y \(\beta_4\) basados en
+una muestra de \(n\) observaciones contuvo al verdadero valor del
+parámetro? Responda para cada tipo de intervalo
+calculado.}{vi. Repita los items a)i) hasta a)v) B = 1000 veces, de modo de tener una muestra de tamaño B de los estimadores de cada \textbackslash beta\_j. ¿Diría que la distribución on de los estimadores de \textbackslash beta\_2 puede aproximarse por la normal? Haga gráficos que le permitan tomar esta decisión. ¿Qué proporción de los B intervalos calculados para \textbackslash beta\_1 y \textbackslash beta\_4 basados en una muestra de n observaciones contuvo al verdadero valor del parámetro? Responda para cada tipo de intervalo calculado.}}\label{vi.-repita-los-items-ai-hasta-av-b-1000-veces-de-modo-de-tener-una-muestra-de-tamano-b-de-los-estimadores-de-cada-beta_j.-diria-que-la-distribucion-on-de-los-estimadores-de-beta_2-puede-aproximarse-por-la-normal-haga-graficos-que-le-permitan-tomar-esta-decision.-que-proporcion-de-los-b-intervalos-calculados-para-beta_1-y-beta_4-basados-en-una-muestra-de-n-observaciones-contuvo-al-verdadero-valor-del-parametro-responda-para-cada-tipo-de-intervalo-calculado.}}
+
+\hypertarget{b-repita-a-para-n25-y-n100.}{%
+\subsection{\texorpdfstring{b) Repita \(a\) para \(n=25\) y
+\(n=100\).}{b) Repita a para n=25 y n=100.}}\label{b-repita-a-para-n25-y-n100.}}
+
+\hypertarget{c-repita-a-y-b-para-el-caso-de-tener-errores-con-distribucion-lognormalmusigma2-emusigma22-tomando-mu0-y-sigma21.-si-para-alguna-de-las-distribuciones-no-consigue-convencerse-de-que-los-hatbeta-tienen-distribucion-que-puede-ser-aproximada-por-una-normal-repita-para-errores-generados-con-esta-distribucion-en-el-esquenma-de-simulacion-anterior-pero-con-n25050010001500020003000.-exhiba-los-resultados-en-una-tabla-y-comente-brevemente-sus-conclusiones.}{%
+\subsection{\texorpdfstring{c) Repita \(a\) y \(b\) para el caso de
+tener errores con distribución
+\(Lognormal(\mu,\sigma^2)-e^{\mu+{\sigma^2}/2}\), tomando \(\mu=0\) y
+\(\sigma^2=1\). Si para alguna de las distribuciones no consigue
+convencerse de que los \(\hat{\beta}\) tienen distribución que puede ser
+aproximada por una normal, repita para errores generados con esta
+distribución en el esquenma de simulación anterior pero con
+\(n=250,500,1000,15000,2000,3000\). Exhiba los resultados en una tabla y
+comente brevemente sus
+conclusiones.}{c) Repita a y b para el caso de tener errores con distribución Lognormal(\textbackslash mu,\textbackslash sigma\^{}2)-e\^{}\{\textbackslash mu+\{\textbackslash sigma\^{}2\}/2\}, tomando \textbackslash mu=0 y \textbackslash sigma\^{}2=1. Si para alguna de las distribuciones no consigue convencerse de que los \textbackslash hat\{\textbackslash beta\} tienen distribución que puede ser aproximada por una normal, repita para errores generados con esta distribución en el esquenma de simulación anterior pero con n=250,500,1000,15000,2000,3000. Exhiba los resultados en una tabla y comente brevemente sus conclusiones.}}\label{c-repita-a-y-b-para-el-caso-de-tener-errores-con-distribucion-lognormalmusigma2-emusigma22-tomando-mu0-y-sigma21.-si-para-alguna-de-las-distribuciones-no-consigue-convencerse-de-que-los-hatbeta-tienen-distribucion-que-puede-ser-aproximada-por-una-normal-repita-para-errores-generados-con-esta-distribucion-en-el-esquenma-de-simulacion-anterior-pero-con-n25050010001500020003000.-exhiba-los-resultados-en-una-tabla-y-comente-brevemente-sus-conclusiones.}}
+
+\hypertarget{d-repita-c-pero-ahora-con-la-distribucion-de-errores-mathcalu-33-y-con-chi2_k--k-con-k3-y-t_k-con-k3.}{%
+\subsection{\texorpdfstring{d) Repita \(c\) pero ahora con la
+distribución de errores \(\mathcal{U}(-3;3)\) y con \({\chi^2}_k -k\)
+con \(k=3\) y \(t_k\) con
+\(k=3\).}{d) Repita c pero ahora con la distribución de errores \textbackslash mathcal\{U\}(-3;3) y con \{\textbackslash chi\^{}2\}\_k -k con k=3 y t\_k con k=3.}}\label{d-repita-c-pero-ahora-con-la-distribucion-de-errores-mathcalu-33-y-con-chi2_k--k-con-k3-y-t_k-con-k3.}}
+
+\hypertarget{desarrollo}{%
+\section{Desarrollo}\label{desarrollo}}
+
+\hypertarget{metodo-empleado}{%
+\subsection{Método Empleado}\label{metodo-empleado}}
+
+Dado que se solicita muchas repeticiones de consignas similares variando
+ciertos parámetros, comenzamos por elaborar una gran cantidad de
+simulaciones con todas las distribuciones contempladas para el error (y
+algunas de nuestra añadidura) con la máxima cantidad de repeticiones y
+el máximo número de muestras por simulación. Después vamos a ir
+acudiendo a ellas para tomar subconjuntos. Esto lo hicimos trivialmente
+y sin remuestrear, tomando los primeros \(n\) elementos de cada
+simulación dado que como estas son efectivamente simulaciones de
+procesos aleatorios no nos pareció que el remuestreo fuera crítico a
+nuestros fines.
+
+Dejamos una serie de parámetros que permitirían generalizar aún más la
+simulación, el modelo del proceso generador de datos \texttt{beta\_pgd},
+el conjunto de \texttt{n} adoptados, la cantidad de simulaciones
+\texttt{n\_sim}, etc.
+
+Dado que esta tabla y la siguiente involucran cantidades nada
+despreciables de cálculos, acá adjuntamos una versión del código similar
+a la usada pero parametrizada para muchas menos repeticiones, al lado
+aparecen comentados los verdaderos vectores que se usaron.
+
+\hypertarget{parametros}{%
+\paragraph{Parámetros}\label{parametros}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(}\StringTok{'tidyverse'}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{'stats'}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{'future'}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{'furrr'}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{'knitr'}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{'kableExtra'}\NormalTok{)}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
+
+\CommentTok{# Coeficientes "platonicos" (i.e., del proceso generador de datos)}
+\NormalTok{beta_pgd <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{-3}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+
+\NormalTok{metodos_intervalo <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"asintotico"}\NormalTok{, }\StringTok{"exacto"}\NormalTok{)}
+\NormalTok{alfa <-}\StringTok{ }\FloatTok{0.1}
+
+\CommentTok{# Funciones generadoras de x_i}
+\NormalTok{generadores_x <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}
+    \StringTok{"x1"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{runif}\NormalTok{(n, }\DataTypeTok{min=}\OperatorTok{-}\DecValTok{5}\NormalTok{, }\DataTypeTok{max=}\DecValTok{5}\NormalTok{) \},}
+    \StringTok{"x2"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{runif}\NormalTok{(n, }\DataTypeTok{min=}\OperatorTok{-}\DecValTok{5}\NormalTok{, }\DataTypeTok{max=}\DecValTok{5}\NormalTok{) \},}
+    \StringTok{"x3"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{runif}\NormalTok{(n, }\DataTypeTok{min=}\OperatorTok{-}\DecValTok{5}\NormalTok{, }\DataTypeTok{max=}\DecValTok{5}\NormalTok{) \},}
+    \StringTok{"x4"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{runif}\NormalTok{(n, }\DataTypeTok{min=}\OperatorTok{-}\DecValTok{5}\NormalTok{, }\DataTypeTok{max=}\DecValTok{5}\NormalTok{) \}}
+\NormalTok{)}
+
+\NormalTok{generadores_eps <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}
+  \StringTok{"normal"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{rnorm}\NormalTok{(n) \},}
+  \StringTok{"exponencial"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{rexp}\NormalTok{(n, }\DataTypeTok{rate =} \DecValTok{1}\OperatorTok{/}\DecValTok{2}\NormalTok{) }\OperatorTok{-}\StringTok{ }\DecValTok{2}\NormalTok{ \},}
+  \StringTok{"lognormal"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{exp}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(n) }\OperatorTok{-}\StringTok{ }\KeywordTok{exp}\NormalTok{(}\FloatTok{0.5}\NormalTok{))  \},}
+  \StringTok{"uniforme"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{runif}\NormalTok{(n, }\DecValTok{-3}\NormalTok{, }\DecValTok{3}\NormalTok{) \},}
+  \StringTok{"chi_cuadrado"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{rchisq}\NormalTok{(n, }\DecValTok{3}\NormalTok{) }\OperatorTok{-}\StringTok{ }\DecValTok{3}\NormalTok{ \},}
+  \StringTok{"student1"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{rt}\NormalTok{(n, }\DecValTok{1}\NormalTok{) \},}
+  \StringTok{"student3"}\NormalTok{ =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n) \{ }\KeywordTok{rt}\NormalTok{(n, }\DecValTok{3}\NormalTok{) \}}
+\NormalTok{)}
+
+\NormalTok{funciones_a <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}
+  \DataTypeTok{beta1 =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+  \DataTypeTok{beta4 =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\NormalTok{)}
+
+\NormalTok{generador_y <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x1, x2, x3, x4, beta_pgd, eps, ...)   \{}
+  \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, x1, x2, x3, x4) }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta_pgd }\OperatorTok{+}\StringTok{ }\NormalTok{eps}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{obtencion-de-la-muestra.}{%
+\paragraph{Obtención de la muestra.}\label{obtencion-de-la-muestra.}}
+
+Para el vector con todos los valores de \(n\), el conjunto de muestras
+pesa 3GB. Por esta razón, optamos por trabajar con otra tabla que acude
+a la tabla con las muestras cuando son necesarias y toma los datos
+pedidos para hallar los intervalos. Pusimos la salida de ambos tibble
+mostrando su forma, \texttt{muestras\_maestras} es el conjunto de las
+muestras y \texttt{muestras\_puntuales} conserva sólo la información
+necesaria para buscar en la tabla más grande.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{generar_muestra <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n, generadores_x, generador_eps, beta_pgd) \{}
+  \CommentTok{# Tibble vacio}
+\NormalTok{  df <-}\StringTok{ }\KeywordTok{tibble}\NormalTok{(}\DataTypeTok{.rows =}\NormalTok{ n)}
+  \CommentTok{# Genero variables regresoras y errores}
+  \ControlFlowTok{for}\NormalTok{ (nombre }\ControlFlowTok{in} \KeywordTok{names}\NormalTok{(generadores_x)) \{}
+    \ControlFlowTok{if}\NormalTok{ (nombre }\OperatorTok{!=}\StringTok{ "y"}\NormalTok{) \{}
+\NormalTok{      df[nombre] <-}\StringTok{ }\NormalTok{generadores_x[[nombre]](n)}
+\NormalTok{    \}}
+\NormalTok{  df}\OperatorTok{$}\NormalTok{eps <-}\StringTok{ }\KeywordTok{generador_eps}\NormalTok{(n)}
+\NormalTok{  \}}
+  \CommentTok{# Genero y}
+\NormalTok{  df[}\StringTok{"y"}\NormalTok{] <-}\StringTok{ }\KeywordTok{pmap_dbl}\NormalTok{(df, generador_y, }\DataTypeTok{beta_pgd=}\NormalTok{beta_pgd)}
+
+  \KeywordTok{return}\NormalTok{(df)}
+\NormalTok{\}}
+
+\NormalTok{ayudante_generar_muestra <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(distr_eps, generadores_x, beta_pgd, n) \{}
+  \KeywordTok{generar_muestra}\NormalTok{(n,generadores_x, generadores_eps[[distr_eps]],}\DataTypeTok{beta_pgd=}\NormalTok{beta_pgd)}
+\NormalTok{\}}
+
+
+\NormalTok{n_muestrales <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{10}\NormalTok{, }\DecValTok{25}\NormalTok{)}
+\CommentTok{#n_muestrales <- c(10, 25, 100, 250, 500, 1000, 1500, 2000, 3000)}
+
+\NormalTok{max_n_muestral <-}\StringTok{ }\KeywordTok{max}\NormalTok{(n_muestrales)}
+\NormalTok{n_sims <-}\StringTok{ }\DecValTok{1000}
+\NormalTok{muestras_maestras <-}\StringTok{ }\KeywordTok{crossing}\NormalTok{(}
+  \DataTypeTok{n_sim =} \KeywordTok{seq}\NormalTok{(max_n_muestral),}
+  \DataTypeTok{distr_eps =} \KeywordTok{names}\NormalTok{(generadores_eps)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
+    \DataTypeTok{muestra =} \KeywordTok{future_map}\NormalTok{(}\DataTypeTok{.progress=}\OtherTok{TRUE}\NormalTok{,}
+\NormalTok{                  distr_eps,}
+\NormalTok{                  ayudante_generar_muestra,}
+                  \DataTypeTok{generadores_x =}\NormalTok{ generadores_x,}
+                  \DataTypeTok{beta_pgd =}\NormalTok{ beta_pgd,}
+                  \DataTypeTok{n =}\NormalTok{ max_n_muestral)}
+\NormalTok{  )}
+
+\NormalTok{muestras_maestras}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 175 x 3
+##    n_sim distr_eps    muestra          
+##    <int> <chr>        <list>           
+##  1     1 chi_cuadrado <tibble [25 x 6]>
+##  2     1 exponencial  <tibble [25 x 6]>
+##  3     1 lognormal    <tibble [25 x 6]>
+##  4     1 normal       <tibble [25 x 6]>
+##  5     1 student1     <tibble [25 x 6]>
+##  6     1 student3     <tibble [25 x 6]>
+##  7     1 uniforme     <tibble [25 x 6]>
+##  8     2 chi_cuadrado <tibble [25 x 6]>
+##  9     2 exponencial  <tibble [25 x 6]>
+## 10     2 lognormal    <tibble [25 x 6]>
+## # ... with 165 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#El '-3' es poco legible, buscar cómo sustraer una columna por nombre.}
+
+\NormalTok{muestras_puntuales <-}\StringTok{ }\NormalTok{muestras_maestras[}\OperatorTok{-}\DecValTok{3}\NormalTok{] }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{crossing}\NormalTok{(}
+    \DataTypeTok{n =}\NormalTok{ n_muestrales}
+\NormalTok{  )}
+
+\NormalTok{muestras_puntuales}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 350 x 3
+##    n_sim distr_eps        n
+##    <int> <chr>        <dbl>
+##  1     1 chi_cuadrado    10
+##  2     1 chi_cuadrado    25
+##  3     1 exponencial     10
+##  4     1 exponencial     25
+##  5     1 lognormal       10
+##  6     1 lognormal       25
+##  7     1 normal          10
+##  8     1 normal          25
+##  9     1 student1        10
+## 10     1 student1        25
+## # ... with 340 more rows
+\end{verbatim}
+
+\hypertarget{intervalos}{%
+\subsection{Intervalos}\label{intervalos}}
+
+Para obtener los intervalos, usamos los parámetros que tiene guardada
+cada fila de \texttt{muestras\_puntuales} y ejecutamos una función que
+lee en \texttt{muestras\_maestras} de acuerdo a estos.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{intervalo_conf <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(a_vec, llamada_lm, alfa, }\DataTypeTok{metodo =} \StringTok{"exacto"}\NormalTok{) \{}
+
+\NormalTok{  betahat <-}\StringTok{ }\NormalTok{llamada_lm}\OperatorTok{$}\NormalTok{coefficients}
+  \CommentTok{# Matriz de covarianza estimada para los coeficientes}
+\NormalTok{  Sigmahat <-}\StringTok{ }\KeywordTok{vcov}\NormalTok{(llamada_lm)}
+
+\NormalTok{  n_muestra <-}\StringTok{ }\KeywordTok{nrow}\NormalTok{(llamada_lm}\OperatorTok{$}\NormalTok{model)}
+\NormalTok{  r <-}\StringTok{ }\NormalTok{llamada_lm}\OperatorTok{$}\NormalTok{rank}
+  \CommentTok{# Cualculo cuantil t o z, segun corresponda}
+  \ControlFlowTok{if}\NormalTok{ (metodo }\OperatorTok{==}\StringTok{ "exacto"}\NormalTok{) \{}
+\NormalTok{    cuantil <-}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\DataTypeTok{p =} \DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DataTypeTok{df =}\NormalTok{ n_muestra }\OperatorTok{-}\StringTok{ }\NormalTok{r)}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (metodo }\OperatorTok{==}\StringTok{ "asintotico"}\NormalTok{) \{}
+\NormalTok{    cuantil <-}\StringTok{ }\KeywordTok{qnorm}\NormalTok{(}\DataTypeTok{p =} \DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{alfa}\OperatorTok{/}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+    \KeywordTok{stop}\NormalTok{(}\StringTok{"Los unicos metodos soportados son 'exacto' y 'asintotico'"}\NormalTok{)}
+\NormalTok{  \}}
+
+\NormalTok{  centro <-}\StringTok{ }\KeywordTok{t}\NormalTok{(a_vec)}\OperatorTok{%*%}\NormalTok{betahat}
+\NormalTok{  delta <-}\StringTok{ }\NormalTok{cuantil }\OperatorTok{*}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{t}\NormalTok{(a_vec) }\OperatorTok{%*%}\StringTok{ }\NormalTok{Sigmahat }\OperatorTok{%*%}\StringTok{ }\NormalTok{a_vec)}
+  \KeywordTok{return}\NormalTok{(}\KeywordTok{c}\NormalTok{(centro }\OperatorTok{-}\StringTok{ }\NormalTok{delta, centro }\OperatorTok{+}\StringTok{ }\NormalTok{delta))}
+\NormalTok{\}}
+
+\NormalTok{cubre <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(intervalo, valor) \{ intervalo[}\DecValTok{1}\NormalTok{] }\OperatorTok{<=}\StringTok{ }\NormalTok{valor }\OperatorTok{&}\StringTok{ }\NormalTok{intervalo[}\DecValTok{2}\NormalTok{] }\OperatorTok{>=}\StringTok{ }\NormalTok{valor\}}
+
+\NormalTok{ayudante_intervalo_conf <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n_simulacion, distr_epsilon, n, fun_a, met_int, alfa) \{}
+\NormalTok{  muestra_a_evaluar <-}\StringTok{ }\NormalTok{(muestras_maestras }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(n_sim}\OperatorTok{==}\NormalTok{n_simulacion,distr_eps}\OperatorTok{==}\NormalTok{distr_epsilon))[[}\DecValTok{1}\NormalTok{,}\StringTok{'muestra'}\NormalTok{]] }\OperatorTok{%>%}\StringTok{ }\KeywordTok{head}\NormalTok{(n)}
+\NormalTok{  modelo <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{x1 }\OperatorTok{+}\StringTok{ }\NormalTok{x2 }\OperatorTok{+}\StringTok{ }\NormalTok{x3 }\OperatorTok{+}\NormalTok{x4,}\DataTypeTok{data=}\NormalTok{muestra_a_evaluar)}
+  \KeywordTok{intervalo_conf}\NormalTok{(}\DataTypeTok{a_vec =}\NormalTok{ funciones_a[[fun_a]], }\DataTypeTok{llamada_lm=}\NormalTok{modelo, }\DataTypeTok{alfa=}\NormalTok{alfa, }\DataTypeTok{metodo =}\NormalTok{ met_int)}
+\NormalTok{\}}
+
+\NormalTok{intervalos <-}\StringTok{ }\NormalTok{muestras_puntuales }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{crossing}\NormalTok{(}
+    \DataTypeTok{fun_a =} \KeywordTok{names}\NormalTok{(funciones_a),}
+    \DataTypeTok{met_int =}\NormalTok{ metodos_intervalo) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
+    \CommentTok{#atbeta es el valor del parámetro en el PGD.}
+    \DataTypeTok{atbeta =} \KeywordTok{map_dbl}\NormalTok{(fun_a, }\ControlFlowTok{function}\NormalTok{(i) funciones_a[[i]] }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta_pgd),}
+    \DataTypeTok{ic =} \KeywordTok{future_pmap}\NormalTok{( }\DataTypeTok{.progress =} \OtherTok{TRUE}\NormalTok{,}
+      \KeywordTok{list}\NormalTok{(n_sim, distr_eps, n, fun_a, met_int),}
+\NormalTok{      ayudante_intervalo_conf,}
+      \DataTypeTok{alfa =}\NormalTok{ alfa),}
+    \DataTypeTok{cubre =} \KeywordTok{map2_lgl}\NormalTok{(ic, atbeta, cubre),}
+    \DataTypeTok{ic_low =} \KeywordTok{map_dbl}\NormalTok{(ic, }\DecValTok{1}\NormalTok{),}
+    \DataTypeTok{ic_upp =} \KeywordTok{map_dbl}\NormalTok{(ic, }\DecValTok{2}\NormalTok{)}
+\NormalTok{    )}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{respuestas}{%
+\section{Respuestas}\label{respuestas}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{intervalos <-}\StringTok{ }\KeywordTok{read_rds}\NormalTok{(}\StringTok{"simulacion.Rds"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
+    \DataTypeTok{estimador =}\NormalTok{ (ic_upp}\OperatorTok{+}\NormalTok{ic_low)}\OperatorTok{/}\DecValTok{2}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{los-intervalos-cubren-a-los-parametros}{%
+\subsection{¿Los intervalos Cubren a los
+Parámetros?}\label{los-intervalos-cubren-a-los-parametros}}
+
+Respondemos directamente para todas las distribuciones estudiadas.
+
+\hypertarget{para-b1-y-es-decir-si-el-primer-intento-de-obtener-el-intervalo-cubre-el-valor.}{%
+\subsubsection{\texorpdfstring{Para \(B=1\) y, es decir si el primer
+intento de obtener el intervalo cubre el
+valor.}{Para B=1 y, es decir si el primer intento de obtener el intervalo cubre el valor.}}\label{para-b1-y-es-decir-si-el-primer-intento-de-obtener-el-intervalo-cubre-el-valor.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sintesis <-}\StringTok{ }\NormalTok{intervalos }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(n_sim}\OperatorTok{==}\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(distr_eps, n, met_int, fun_a) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{prop_cubre =} \KeywordTok{mean}\NormalTok{(cubre))}
+
+\NormalTok{sintesis }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{ (}
+    \DataTypeTok{prop_cubre =} \KeywordTok{round}\NormalTok{(}\DataTypeTok{digits=}\DecValTok{4}\NormalTok{,}\DataTypeTok{x=}\NormalTok{prop_cubre),}
+    \DataTypeTok{prop_cubre =} \KeywordTok{cell_spec}\NormalTok{(prop_cubre,}\StringTok{"latex"}\NormalTok{,}
+                           \DataTypeTok{color =} \KeywordTok{ifelse}\NormalTok{(prop_cubre }\OperatorTok{<}\StringTok{ }\FloatTok{0.89}\NormalTok{,}\StringTok{"red"}\NormalTok{,}\StringTok{"blue"}\NormalTok{),}
+                           \DataTypeTok{background =} \KeywordTok{ifelse}\NormalTok{(prop_cubre }\OperatorTok{<}\StringTok{ }\FloatTok{0.86}\NormalTok{,}\StringTok{"gray"}\NormalTok{,}\StringTok{"white"}\NormalTok{)}
+\NormalTok{                           )}
+\NormalTok{  ) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{spread}\NormalTok{(n,prop_cubre) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{format=}\StringTok{"latex"}\NormalTok{, }\DataTypeTok{escape =}\NormalTok{ F ) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable_styling}\NormalTok{(}\StringTok{"condensed"}\NormalTok{, }\StringTok{"striped"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{add_header_above}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{" "}\NormalTok{=}\DecValTok{3}\NormalTok{,}\StringTok{"valores de n"}\NormalTok{=}\DecValTok{9}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l}
+\hline
+\multicolumn{3}{c|}{ } & \multicolumn{9}{c}{valores de n} \\
+\cline{4-12}
+distr_eps & met_int & fun_a & 10 & 25 & 100 & 250 & 500 & 1000 & 1500 & 2000 & 3000\\
+\hline
+\rowcolor{gray!6}  chi_cuadrado & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{gray}{\textcolor{red}{0}}\\
+\hline
+chi_cuadrado & asintotico & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}}\\
+\hline
+\rowcolor{gray!6}  chi_cuadrado & exacto & beta1 & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{gray}{\textcolor{red}{0}}\\
+\hline
+chi_cuadrado & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}}\\
+\hline
+\rowcolor{gray!6}  exponencial & asintotico & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+exponencial & asintotico & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  exponencial & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+exponencial & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  lognormal & asintotico & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}}\\
+\hline
+lognormal & asintotico & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  lognormal & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}}\\
+\hline
+lognormal & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  normal & asintotico & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+normal & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  normal & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+normal & exacto & beta4 & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  student1 & asintotico & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+student1 & asintotico & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  student1 & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+student1 & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  student3 & asintotico & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+student3 & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  student3 & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+student3 & exacto & beta4 & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{gray}{\textcolor{red}{0}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  uniforme & asintotico & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+uniforme & asintotico & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\rowcolor{gray!6}  uniforme & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+uniforme & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}} & \cellcolor{white}{\textcolor{blue}{1}}\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{para-b1000}{%
+\subsubsection{\texorpdfstring{Para
+\(B=1000\)}{Para B=1000}}\label{para-b1000}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sintesis <-}\StringTok{ }\NormalTok{intervalos }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(n_sim}\OperatorTok{<=}\DecValTok{1000}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(distr_eps, n, met_int, fun_a) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{prop_cubre =} \KeywordTok{mean}\NormalTok{(cubre))}
+
+\NormalTok{sintesis }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{ (}
+    \DataTypeTok{prop_cubre =} \KeywordTok{round}\NormalTok{(}\DataTypeTok{digits=}\DecValTok{4}\NormalTok{,}\DataTypeTok{x=}\NormalTok{prop_cubre),}
+    \DataTypeTok{prop_cubre =} \KeywordTok{cell_spec}\NormalTok{(prop_cubre,}\StringTok{"latex"}\NormalTok{,}
+                           \DataTypeTok{color =} \KeywordTok{ifelse}\NormalTok{(prop_cubre }\OperatorTok{<}\StringTok{ }\FloatTok{0.89}\NormalTok{,}\StringTok{"red"}\NormalTok{,}\StringTok{"blue"}\NormalTok{),}
+                           \DataTypeTok{background =} \KeywordTok{ifelse}\NormalTok{(prop_cubre }\OperatorTok{<}\StringTok{ }\FloatTok{0.86}\NormalTok{,}\StringTok{"gray"}\NormalTok{,}\StringTok{"white"}\NormalTok{)}
+\NormalTok{                           )}
+\NormalTok{  ) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{spread}\NormalTok{(n,prop_cubre) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{format=}\StringTok{"latex"}\NormalTok{, }\DataTypeTok{escape =}\NormalTok{ F) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable_styling}\NormalTok{(}\StringTok{"condensed"}\NormalTok{, }\StringTok{"striped"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{add_header_above}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{" "}\NormalTok{=}\DecValTok{3}\NormalTok{,}\StringTok{"valores de n"}\NormalTok{=}\DecValTok{9}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l}
+\hline
+\multicolumn{3}{c|}{ } & \multicolumn{9}{c}{valores de n} \\
+\cline{4-12}
+distr_eps & met_int & fun_a & 10 & 25 & 100 & 250 & 500 & 1000 & 1500 & 2000 & 3000\\
+\hline
+\rowcolor{gray!6}  chi_cuadrado & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.841}} & \cellcolor{white}{\textcolor{blue}{0.909}} & \cellcolor{white}{\textcolor{blue}{0.906}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{blue}{0.895}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{red}{0.887}} & \cellcolor{white}{\textcolor{red}{0.889}} & \cellcolor{white}{\textcolor{blue}{0.891}}\\
+\hline
+chi_cuadrado & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.848}} & \cellcolor{white}{\textcolor{red}{0.884}} & \cellcolor{white}{\textcolor{blue}{0.895}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.917}} & \cellcolor{white}{\textcolor{blue}{0.919}} & \cellcolor{white}{\textcolor{blue}{0.92}}\\
+\hline
+\rowcolor{gray!6}  chi_cuadrado & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.926}} & \cellcolor{white}{\textcolor{blue}{0.908}} & \cellcolor{white}{\textcolor{blue}{0.895}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{red}{0.887}} & \cellcolor{white}{\textcolor{blue}{0.89}} & \cellcolor{white}{\textcolor{blue}{0.891}}\\
+\hline
+chi_cuadrado & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.908}} & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.917}} & \cellcolor{white}{\textcolor{blue}{0.919}} & \cellcolor{white}{\textcolor{blue}{0.92}}\\
+\hline
+\rowcolor{gray!6}  exponencial & asintotico & beta1 & \cellcolor{white}{\textcolor{red}{0.86}} & \cellcolor{white}{\textcolor{red}{0.862}} & \cellcolor{white}{\textcolor{blue}{0.892}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.892}} & \cellcolor{white}{\textcolor{red}{0.879}} & \cellcolor{white}{\textcolor{red}{0.881}} & \cellcolor{white}{\textcolor{red}{0.882}} & \cellcolor{white}{\textcolor{red}{0.869}}\\
+\hline
+exponencial & asintotico & beta4 & \cellcolor{white}{\textcolor{red}{0.865}} & \cellcolor{white}{\textcolor{blue}{0.89}} & \cellcolor{white}{\textcolor{blue}{0.909}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.911}} & \cellcolor{white}{\textcolor{blue}{0.903}} & \cellcolor{white}{\textcolor{blue}{0.895}} & \cellcolor{white}{\textcolor{blue}{0.894}} & \cellcolor{white}{\textcolor{blue}{0.904}}\\
+\hline
+\rowcolor{gray!6}  exponencial & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.917}} & \cellcolor{white}{\textcolor{red}{0.881}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{red}{0.88}} & \cellcolor{white}{\textcolor{red}{0.881}} & \cellcolor{white}{\textcolor{red}{0.883}} & \cellcolor{white}{\textcolor{red}{0.869}}\\
+\hline
+exponencial & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.915}} & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.915}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.911}} & \cellcolor{white}{\textcolor{blue}{0.903}} & \cellcolor{white}{\textcolor{blue}{0.895}} & \cellcolor{white}{\textcolor{blue}{0.895}} & \cellcolor{white}{\textcolor{blue}{0.904}}\\
+\hline
+\rowcolor{gray!6}  lognormal & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.842}} & \cellcolor{white}{\textcolor{red}{0.888}} & \cellcolor{white}{\textcolor{blue}{0.899}} & \cellcolor{white}{\textcolor{blue}{0.901}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{blue}{0.903}}\\
+\hline
+lognormal & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.825}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.917}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{red}{0.884}} & \cellcolor{white}{\textcolor{blue}{0.895}} & \cellcolor{white}{\textcolor{red}{0.889}} & \cellcolor{white}{\textcolor{red}{0.881}} & \cellcolor{white}{\textcolor{blue}{0.894}}\\
+\hline
+\rowcolor{gray!6}  lognormal & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{blue}{0.906}} & \cellcolor{white}{\textcolor{blue}{0.902}} & \cellcolor{white}{\textcolor{blue}{0.902}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{blue}{0.903}}\\
+\hline
+lognormal & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.89}} & \cellcolor{white}{\textcolor{blue}{0.912}} & \cellcolor{white}{\textcolor{blue}{0.917}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{red}{0.884}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{red}{0.889}} & \cellcolor{white}{\textcolor{red}{0.881}} & \cellcolor{white}{\textcolor{blue}{0.894}}\\
+\hline
+\rowcolor{gray!6}  normal & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.841}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{blue}{0.894}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{red}{0.872}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{red}{0.878}}\\
+\hline
+normal & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.852}} & \cellcolor{white}{\textcolor{red}{0.888}} & \cellcolor{white}{\textcolor{blue}{0.894}} & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.916}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.911}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.896}}\\
+\hline
+\rowcolor{gray!6}  normal & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.899}} & \cellcolor{white}{\textcolor{blue}{0.909}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{red}{0.887}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{red}{0.874}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{red}{0.878}}\\
+\hline
+normal & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.899}} & \cellcolor{white}{\textcolor{blue}{0.912}} & \cellcolor{white}{\textcolor{blue}{0.916}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.912}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.896}}\\
+\hline
+\rowcolor{gray!6}  student1 & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.858}} & \cellcolor{white}{\textcolor{red}{0.889}} & \cellcolor{white}{\textcolor{blue}{0.919}} & \cellcolor{white}{\textcolor{blue}{0.904}} & \cellcolor{white}{\textcolor{blue}{0.904}} & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.913}} & \cellcolor{white}{\textcolor{blue}{0.914}} & \cellcolor{white}{\textcolor{blue}{0.899}}\\
+\hline
+student1 & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.856}} & \cellcolor{white}{\textcolor{red}{0.878}} & \cellcolor{white}{\textcolor{blue}{0.914}} & \cellcolor{white}{\textcolor{blue}{0.906}} & \cellcolor{white}{\textcolor{blue}{0.901}} & \cellcolor{white}{\textcolor{blue}{0.908}} & \cellcolor{white}{\textcolor{blue}{0.903}} & \cellcolor{white}{\textcolor{blue}{0.908}} & \cellcolor{white}{\textcolor{blue}{0.908}}\\
+\hline
+\rowcolor{gray!6}  student1 & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.923}} & \cellcolor{white}{\textcolor{blue}{0.906}} & \cellcolor{white}{\textcolor{blue}{0.921}} & \cellcolor{white}{\textcolor{blue}{0.906}} & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.914}} & \cellcolor{white}{\textcolor{blue}{0.914}} & \cellcolor{white}{\textcolor{blue}{0.899}}\\
+\hline
+student1 & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.913}} & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.917}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.901}} & \cellcolor{white}{\textcolor{blue}{0.909}} & \cellcolor{white}{\textcolor{blue}{0.903}} & \cellcolor{white}{\textcolor{blue}{0.908}} & \cellcolor{white}{\textcolor{blue}{0.908}}\\
+\hline
+\rowcolor{gray!6}  student3 & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.853}} & \cellcolor{white}{\textcolor{red}{0.884}} & \cellcolor{white}{\textcolor{red}{0.884}} & \cellcolor{white}{\textcolor{red}{0.887}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{blue}{0.894}}\\
+\hline
+student3 & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.856}} & \cellcolor{white}{\textcolor{red}{0.875}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.912}} & \cellcolor{white}{\textcolor{blue}{0.899}} & \cellcolor{white}{\textcolor{blue}{0.901}} & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.908}} & \cellcolor{white}{\textcolor{blue}{0.901}}\\
+\hline
+\rowcolor{gray!6}  student3 & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.909}} & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.89}} & \cellcolor{white}{\textcolor{red}{0.889}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{blue}{0.908}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{blue}{0.894}}\\
+\hline
+student3 & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.909}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.899}} & \cellcolor{white}{\textcolor{blue}{0.912}} & \cellcolor{white}{\textcolor{blue}{0.899}} & \cellcolor{white}{\textcolor{blue}{0.901}} & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.901}}\\
+\hline
+\rowcolor{gray!6}  uniforme & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.858}} & \cellcolor{white}{\textcolor{red}{0.881}} & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{blue}{0.911}} & \cellcolor{white}{\textcolor{blue}{0.913}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.894}}\\
+\hline
+uniforme & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.823}} & \cellcolor{white}{\textcolor{blue}{0.892}} & \cellcolor{white}{\textcolor{blue}{0.895}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.904}} & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.891}}\\
+\hline
+\rowcolor{gray!6}  uniforme & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.903}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.906}} & \cellcolor{white}{\textcolor{blue}{0.911}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{blue}{0.911}} & \cellcolor{white}{\textcolor{blue}{0.913}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.894}}\\
+\hline
+uniforme & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.904}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.904}} & \cellcolor{white}{\textcolor{blue}{0.911}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.891}}\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{para-b3000}{%
+\subsubsection{\texorpdfstring{Para
+\(B=3000\)}{Para B=3000}}\label{para-b3000}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sintesis <-}\StringTok{ }\NormalTok{intervalos }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(distr_eps, n, met_int, fun_a) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{prop_cubre =} \KeywordTok{mean}\NormalTok{(cubre))}
+
+\NormalTok{sintesis }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{ (}
+    \DataTypeTok{prop_cubre =} \KeywordTok{round}\NormalTok{(}\DataTypeTok{digits=}\DecValTok{4}\NormalTok{,}\DataTypeTok{x=}\NormalTok{prop_cubre),}
+    \DataTypeTok{prop_cubre =} \KeywordTok{cell_spec}\NormalTok{(prop_cubre,}\StringTok{"latex"}\NormalTok{,}
+                           \DataTypeTok{color =} \KeywordTok{ifelse}\NormalTok{(prop_cubre }\OperatorTok{<}\StringTok{ }\FloatTok{0.89}\NormalTok{,}\StringTok{"red"}\NormalTok{,}\StringTok{"blue"}\NormalTok{),}
+                           \DataTypeTok{background =} \KeywordTok{ifelse}\NormalTok{(prop_cubre }\OperatorTok{<}\StringTok{ }\FloatTok{0.86}\NormalTok{,}\StringTok{"gray"}\NormalTok{,}\StringTok{"white"}\NormalTok{)}
+\NormalTok{                           )}
+\NormalTok{  ) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{spread}\NormalTok{(n,prop_cubre) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable}\NormalTok{(}\DataTypeTok{format=}\StringTok{"latex"}\NormalTok{, }\DataTypeTok{escape =}\NormalTok{ F) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{kable_styling}\NormalTok{(}\StringTok{"condensed"}\NormalTok{, }\StringTok{"striped"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{add_header_above}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{" "}\NormalTok{=}\DecValTok{3}\NormalTok{,}\StringTok{"valores de n"}\NormalTok{=}\DecValTok{9}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l}
+\hline
+\multicolumn{3}{c|}{ } & \multicolumn{9}{c}{valores de n} \\
+\cline{4-12}
+distr_eps & met_int & fun_a & 10 & 25 & 100 & 250 & 500 & 1000 & 1500 & 2000 & 3000\\
+\hline
+\rowcolor{gray!6}  chi_cuadrado & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.84}} & \cellcolor{white}{\textcolor{blue}{0.8903}} & \cellcolor{white}{\textcolor{blue}{0.9013}} & \cellcolor{white}{\textcolor{blue}{0.8953}} & \cellcolor{white}{\textcolor{blue}{0.9023}} & \cellcolor{white}{\textcolor{blue}{0.8963}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.8983}} & \cellcolor{white}{\textcolor{blue}{0.9023}}\\
+\hline
+chi_cuadrado & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.8463}} & \cellcolor{white}{\textcolor{red}{0.8853}} & \cellcolor{white}{\textcolor{blue}{0.8957}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.9127}} & \cellcolor{white}{\textcolor{blue}{0.8987}} & \cellcolor{white}{\textcolor{blue}{0.9103}} & \cellcolor{white}{\textcolor{blue}{0.9107}} & \cellcolor{white}{\textcolor{blue}{0.9073}}\\
+\hline
+\rowcolor{gray!6}  chi_cuadrado & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.902}} & \cellcolor{white}{\textcolor{blue}{0.9073}} & \cellcolor{white}{\textcolor{blue}{0.9027}} & \cellcolor{white}{\textcolor{blue}{0.8967}} & \cellcolor{white}{\textcolor{blue}{0.9033}} & \cellcolor{white}{\textcolor{blue}{0.8967}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.8987}} & \cellcolor{white}{\textcolor{blue}{0.9023}}\\
+\hline
+chi_cuadrado & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.9057}} & \cellcolor{white}{\textcolor{blue}{0.9027}} & \cellcolor{white}{\textcolor{blue}{0.8983}} & \cellcolor{white}{\textcolor{blue}{0.899}} & \cellcolor{white}{\textcolor{blue}{0.9133}} & \cellcolor{white}{\textcolor{blue}{0.899}} & \cellcolor{white}{\textcolor{blue}{0.9103}} & \cellcolor{white}{\textcolor{blue}{0.9107}} & \cellcolor{white}{\textcolor{blue}{0.9077}}\\
+\hline
+\rowcolor{gray!6}  exponencial & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.8527}} & \cellcolor{white}{\textcolor{red}{0.8717}} & \cellcolor{white}{\textcolor{blue}{0.8957}} & \cellcolor{white}{\textcolor{blue}{0.8967}} & \cellcolor{white}{\textcolor{red}{0.8873}} & \cellcolor{white}{\textcolor{blue}{0.8943}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.8903}} & \cellcolor{white}{\textcolor{red}{0.8867}}\\
+\hline
+exponencial & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.8503}} & \cellcolor{white}{\textcolor{blue}{0.8907}} & \cellcolor{white}{\textcolor{blue}{0.901}} & \cellcolor{white}{\textcolor{blue}{0.909}} & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.8997}} & \cellcolor{white}{\textcolor{blue}{0.8963}} & \cellcolor{white}{\textcolor{blue}{0.9023}} & \cellcolor{white}{\textcolor{blue}{0.902}}\\
+\hline
+\rowcolor{gray!6}  exponencial & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.9087}} & \cellcolor{white}{\textcolor{blue}{0.892}} & \cellcolor{white}{\textcolor{blue}{0.9003}} & \cellcolor{white}{\textcolor{blue}{0.8987}} & \cellcolor{white}{\textcolor{red}{0.8877}} & \cellcolor{white}{\textcolor{blue}{0.8953}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{red}{0.8867}}\\
+\hline
+exponencial & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.9053}} & \cellcolor{white}{\textcolor{blue}{0.9053}} & \cellcolor{white}{\textcolor{blue}{0.9097}} & \cellcolor{white}{\textcolor{blue}{0.9063}} & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.8963}} & \cellcolor{white}{\textcolor{blue}{0.9027}} & \cellcolor{white}{\textcolor{blue}{0.902}}\\
+\hline
+\rowcolor{gray!6}  lognormal & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.8377}} & \cellcolor{white}{\textcolor{blue}{0.894}} & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.9047}} & \cellcolor{white}{\textcolor{blue}{0.8913}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.8963}} & \cellcolor{white}{\textcolor{blue}{0.901}} & \cellcolor{white}{\textcolor{blue}{0.9103}}\\
+\hline
+lognormal & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.8353}} & \cellcolor{white}{\textcolor{red}{0.8823}} & \cellcolor{white}{\textcolor{blue}{0.9113}} & \cellcolor{white}{\textcolor{blue}{0.8993}} & \cellcolor{white}{\textcolor{blue}{0.891}} & \cellcolor{white}{\textcolor{blue}{0.8913}} & \cellcolor{white}{\textcolor{blue}{0.8917}} & \cellcolor{white}{\textcolor{blue}{0.8917}} & \cellcolor{white}{\textcolor{blue}{0.9067}}\\
+\hline
+\rowcolor{gray!6}  lognormal & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.9027}} & \cellcolor{white}{\textcolor{blue}{0.9053}} & \cellcolor{white}{\textcolor{blue}{0.8917}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.8963}} & \cellcolor{white}{\textcolor{blue}{0.901}} & \cellcolor{white}{\textcolor{blue}{0.9103}}\\
+\hline
+lognormal & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.8987}} & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.9137}} & \cellcolor{white}{\textcolor{blue}{0.9007}} & \cellcolor{white}{\textcolor{blue}{0.8917}} & \cellcolor{white}{\textcolor{blue}{0.8917}} & \cellcolor{white}{\textcolor{blue}{0.8923}} & \cellcolor{white}{\textcolor{blue}{0.8917}} & \cellcolor{white}{\textcolor{blue}{0.9067}}\\
+\hline
+\rowcolor{gray!6}  normal & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.8473}} & \cellcolor{white}{\textcolor{red}{0.8883}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{red}{0.8867}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.8937}} & \cellcolor{white}{\textcolor{blue}{0.89}} & \cellcolor{white}{\textcolor{blue}{0.8917}}\\
+\hline
+normal & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.8527}} & \cellcolor{white}{\textcolor{red}{0.8883}} & \cellcolor{white}{\textcolor{blue}{0.8983}} & \cellcolor{white}{\textcolor{blue}{0.906}} & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.8957}} & \cellcolor{white}{\textcolor{blue}{0.9017}} & \cellcolor{white}{\textcolor{blue}{0.8973}} & \cellcolor{white}{\textcolor{blue}{0.895}}\\
+\hline
+\rowcolor{gray!6}  normal & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.9013}} & \cellcolor{white}{\textcolor{blue}{0.901}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{red}{0.8873}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.8947}} & \cellcolor{white}{\textcolor{blue}{0.89}} & \cellcolor{white}{\textcolor{blue}{0.8917}}\\
+\hline
+normal & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.9083}} & \cellcolor{white}{\textcolor{blue}{0.9023}} & \cellcolor{white}{\textcolor{blue}{0.902}} & \cellcolor{white}{\textcolor{blue}{0.9073}} & \cellcolor{white}{\textcolor{blue}{0.9053}} & \cellcolor{white}{\textcolor{blue}{0.8967}} & \cellcolor{white}{\textcolor{blue}{0.902}} & \cellcolor{white}{\textcolor{blue}{0.8973}} & \cellcolor{white}{\textcolor{blue}{0.895}}\\
+\hline
+\rowcolor{gray!6}  student1 & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.839}} & \cellcolor{white}{\textcolor{red}{0.8893}} & \cellcolor{white}{\textcolor{blue}{0.9033}} & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.906}} & \cellcolor{white}{\textcolor{blue}{0.905}} & \cellcolor{white}{\textcolor{blue}{0.9087}} & \cellcolor{white}{\textcolor{blue}{0.9103}} & \cellcolor{white}{\textcolor{blue}{0.9047}}\\
+\hline
+student1 & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.8533}} & \cellcolor{white}{\textcolor{red}{0.882}} & \cellcolor{white}{\textcolor{blue}{0.9043}} & \cellcolor{white}{\textcolor{blue}{0.913}} & \cellcolor{white}{\textcolor{blue}{0.911}} & \cellcolor{white}{\textcolor{blue}{0.9147}} & \cellcolor{white}{\textcolor{blue}{0.9057}} & \cellcolor{white}{\textcolor{blue}{0.9043}} & \cellcolor{white}{\textcolor{blue}{0.9033}}\\
+\hline
+\rowcolor{gray!6}  student1 & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.911}} & \cellcolor{white}{\textcolor{blue}{0.9057}} & \cellcolor{white}{\textcolor{blue}{0.9067}} & \cellcolor{white}{\textcolor{blue}{0.9117}} & \cellcolor{white}{\textcolor{blue}{0.907}} & \cellcolor{white}{\textcolor{blue}{0.9053}} & \cellcolor{white}{\textcolor{blue}{0.909}} & \cellcolor{white}{\textcolor{blue}{0.9103}} & \cellcolor{white}{\textcolor{blue}{0.9047}}\\
+\hline
+student1 & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.915}} & \cellcolor{white}{\textcolor{blue}{0.9003}} & \cellcolor{white}{\textcolor{blue}{0.9077}} & \cellcolor{white}{\textcolor{blue}{0.915}} & \cellcolor{white}{\textcolor{blue}{0.9117}} & \cellcolor{white}{\textcolor{blue}{0.915}} & \cellcolor{white}{\textcolor{blue}{0.9057}} & \cellcolor{white}{\textcolor{blue}{0.9047}} & \cellcolor{white}{\textcolor{blue}{0.9037}}\\
+\hline
+\rowcolor{gray!6}  student3 & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.8373}} & \cellcolor{white}{\textcolor{blue}{0.8913}} & \cellcolor{white}{\textcolor{blue}{0.8983}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.8953}} & \cellcolor{white}{\textcolor{blue}{0.8957}} & \cellcolor{white}{\textcolor{blue}{0.8997}}\\
+\hline
+student3 & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.8447}} & \cellcolor{white}{\textcolor{red}{0.8743}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.8957}} & \cellcolor{white}{\textcolor{blue}{0.8927}} & \cellcolor{white}{\textcolor{blue}{0.8957}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.9073}} & \cellcolor{white}{\textcolor{blue}{0.9093}}\\
+\hline
+\rowcolor{gray!6}  student3 & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.8973}} & \cellcolor{white}{\textcolor{blue}{0.91}} & \cellcolor{white}{\textcolor{blue}{0.9017}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.8967}} & \cellcolor{white}{\textcolor{blue}{0.8953}} & \cellcolor{white}{\textcolor{blue}{0.8957}} & \cellcolor{white}{\textcolor{blue}{0.8997}}\\
+\hline
+student3 & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{blue}{0.9013}} & \cellcolor{white}{\textcolor{blue}{0.897}} & \cellcolor{white}{\textcolor{blue}{0.8933}} & \cellcolor{white}{\textcolor{blue}{0.8957}} & \cellcolor{white}{\textcolor{blue}{0.898}} & \cellcolor{white}{\textcolor{blue}{0.908}} & \cellcolor{white}{\textcolor{blue}{0.9093}}\\
+\hline
+\rowcolor{gray!6}  uniforme & asintotico & beta1 & \cellcolor{gray}{\textcolor{red}{0.84}} & \cellcolor{white}{\textcolor{red}{0.885}} & \cellcolor{white}{\textcolor{blue}{0.8993}} & \cellcolor{white}{\textcolor{blue}{0.8917}} & \cellcolor{white}{\textcolor{blue}{0.895}} & \cellcolor{white}{\textcolor{blue}{0.9007}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{blue}{0.8937}}\\
+\hline
+uniforme & asintotico & beta4 & \cellcolor{gray}{\textcolor{red}{0.828}} & \cellcolor{white}{\textcolor{red}{0.8833}} & \cellcolor{white}{\textcolor{blue}{0.8947}} & \cellcolor{white}{\textcolor{blue}{0.8983}} & \cellcolor{white}{\textcolor{blue}{0.9013}} & \cellcolor{white}{\textcolor{blue}{0.9023}} & \cellcolor{white}{\textcolor{blue}{0.9023}} & \cellcolor{white}{\textcolor{blue}{0.8963}} & \cellcolor{white}{\textcolor{blue}{0.898}}\\
+\hline
+\rowcolor{gray!6}  uniforme & exacto & beta1 & \cellcolor{white}{\textcolor{blue}{0.8993}} & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.903}} & \cellcolor{white}{\textcolor{blue}{0.8927}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.9007}} & \cellcolor{white}{\textcolor{blue}{0.8933}} & \cellcolor{white}{\textcolor{blue}{0.893}} & \cellcolor{white}{\textcolor{blue}{0.8937}}\\
+\hline
+uniforme & exacto & beta4 & \cellcolor{white}{\textcolor{blue}{0.8993}} & \cellcolor{white}{\textcolor{blue}{0.896}} & \cellcolor{white}{\textcolor{blue}{0.899}} & \cellcolor{white}{\textcolor{blue}{0.9}} & \cellcolor{white}{\textcolor{blue}{0.902}} & \cellcolor{white}{\textcolor{blue}{0.9027}} & \cellcolor{white}{\textcolor{blue}{0.9027}} & \cellcolor{white}{\textcolor{blue}{0.8963}} & \cellcolor{white}{\textcolor{blue}{0.898}}\\
+\hline
+\end{tabular}
+\end{table}
+
+Observamos que para muestras pequeñas, con \(n=10\), es usual que los
+intervalos asintóticos no lleguen a cubrir los parámetros. En varios
+casos incluido el exponencial nuestra media de aciertos está por debajo
+del \(\alpha\) establecido. Esto no mejora incrementando las
+repeticiones hasta 3.000, es decir que probablemente ya estábamos cerca
+de su límite.
+
+\hypertarget{proporcion-de-intervalos-que-no-cubren-el-parametro-del-pgd}{%
+\subsubsection{Proporción de Intervalos que no cubren el parámetro del
+PGD}\label{proporcion-de-intervalos-que-no-cubren-el-parametro-del-pgd}}
+
+En este gráfico mostramos en columnas paralelas la proporción de casos
+donde no se cubrió el parámetro por método y por tamaño de muestra para
+cada variable considerada.
+
+\hypertarget{para-el-error-exponencial}{%
+\paragraph{Para el Error Exponencial}\label{para-el-error-exponencial}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{graficar_proporciones_cobertura <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(distr_eps)\{}
+\NormalTok{  intervalos }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{filter}\NormalTok{(distr_eps}\OperatorTok{==}\NormalTok{distr_eps,cubre}\OperatorTok{==}\OtherTok{FALSE}\NormalTok{, n_sim }\OperatorTok{<=}\StringTok{ }\DecValTok{1000}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ met_int, }\DataTypeTok{y=}\NormalTok{..count..}\OperatorTok{/}\KeywordTok{sum}\NormalTok{(..count..) , }\DataTypeTok{fill=}\NormalTok{n, }\DataTypeTok{color =}\NormalTok{ met_int)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_bar}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme}\NormalTok{(}
+      \DataTypeTok{axis.text.x.bottom =} \KeywordTok{element_blank}\NormalTok{()}
+\NormalTok{    ) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{labs}\NormalTok{(}
+      \DataTypeTok{x =} \KeywordTok{element_blank}\NormalTok{(),}
+      \DataTypeTok{y =} \StringTok{"Proporción de fallas"}\NormalTok{,}
+      \DataTypeTok{color =} \StringTok{"Método del Intervalo"}\NormalTok{,}
+      \DataTypeTok{fill =} \StringTok{"n de la muestra"}
+\NormalTok{    ) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{facet_grid}\NormalTok{(fun_a}\OperatorTok{~}\NormalTok{n)}
+\NormalTok{\}}
+
+\NormalTok{graficar_proporciones_cobertura2 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(distr_eps)\{}
+\NormalTok{  sintesis }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{filter}\NormalTok{(distr_eps}\OperatorTok{==}\NormalTok{distr_eps) }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ n, }\DataTypeTok{y=}\NormalTok{ prop_cubre , }\DataTypeTok{fill=}\NormalTok{n, }\DataTypeTok{color =}\NormalTok{ met_int)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_smooth}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme}\NormalTok{(}
+      \DataTypeTok{axis.text.x.bottom =} \KeywordTok{element_blank}\NormalTok{()}
+\NormalTok{    ) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{facet_grid}\NormalTok{(.}\OperatorTok{~}\NormalTok{met_int)}
+\NormalTok{\}}
+
+\CommentTok{#graficar_proporciones_cobertura2('exponencial')}
+
+\KeywordTok{graficar_proporciones_cobertura}\NormalTok{(}\StringTok{'exponencial'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{informeSaleaAPDF_files/figure-latex/intervalos exponenciales que cubren-1.pdf}
+
+\hypertarget{para-el-error-lognormal}{%
+\paragraph{Para el Error Lognormal}\label{para-el-error-lognormal}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{graficar_proporciones_cobertura}\NormalTok{(}\StringTok{'lognormal'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{informeSaleaAPDF_files/figure-latex/intervalos lognormales que cubren-1.pdf}
+
+\hypertarget{para-el-error-uniforme}{%
+\paragraph{Para el Error Uniforme}\label{para-el-error-uniforme}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{graficar_proporciones_cobertura}\NormalTok{(}\StringTok{'uniforme'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{informeSaleaAPDF_files/figure-latex/intervalos uniformes que cubren-1.pdf}
+
+\hypertarget{para-el-error-chi-cuadrado}{%
+\paragraph{Para el Error Chi
+Cuadrado}\label{para-el-error-chi-cuadrado}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{graficar_proporciones_cobertura}\NormalTok{(}\StringTok{'chi_cuadrado'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{informeSaleaAPDF_files/figure-latex/intervalos chi que cubren-1.pdf}
+
+\hypertarget{para-el-error-t}{%
+\paragraph{Para el Error T}\label{para-el-error-t}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{graficar_proporciones_cobertura}\NormalTok{(}\StringTok{'student3'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{informeSaleaAPDF_files/figure-latex/intervalos T que cubren-1.pdf}
+
+\hypertarget{para-el-error-cauchy}{%
+\paragraph{Para el error Cauchy}\label{para-el-error-cauchy}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{graficar_proporciones_cobertura}\NormalTok{(}\StringTok{'student1'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{informeSaleaAPDF_files/figure-latex/intervalos cauchy que cubren-1.pdf}
+
+\hypertarget{algunas-observaciones-sobre-estos-patrones}{%
+\subsubsection{Algunas Observaciones Sobre Estos
+Patrones}\label{algunas-observaciones-sobre-estos-patrones}}
+
+Se ven varios fenómenos que aprecen dignos de interés pero no querríamos
+interpretar de forma trivial.
+
+Los incrementos tanto en el tamaño de muestra como en el número de
+repeticiones brindan en principio un incremento en el apego al valor de
+\(\alpha\) para los intervalos asintóticos. Después de una cantidad de
+valores vemos que ambos se comportan en forma prácticamente
+indistinguible aunque es notable la precisión inicial del intervalo
+exacto.
+
+Es imposible incrementar nuestro apego en la tasa de acierto al alfa más
+allá de cierto nivel, de hecho en algunos casos observamos regresiones
+al incrementar el valor de \(B\). Estas regresiones son pequeñas, en la
+mayoría de los casos una vez que nos acercamos lo suficiente en la
+proporción de aciertos a \(1-\alpha\) permanecemos ahí, pero en el
+gráfico se ven exageradas por la escala. Originalmente habíamos hecho un
+gráfico de tasa de aciertos en vez de tasa de errores y eran bastante
+difíciles de percibir.
+
+En el caso de la distribución de Cauchy es tentador pensar que si bien
+no hay esperanza finita, hay una región que concentra la máxima densidad
+y por tanto define un intervalo de máxima probabilidad. La ausencia de
+esperanza es porque las colas no convergen a 0 con suficiente
+``rapidez'' y eso nos va a afectar a la hora de estudiar cómo se portan
+los estimadores cuando el error tiene esta forma. El intervalo, en
+cambio, funciona razonablemente bien.
+
+\hypertarget{los-estimadores-tienen-distribucion-normal}{%
+\subsection{¿Los Estimadores Tienen Distribución
+Normal?}\label{los-estimadores-tienen-distribucion-normal}}
+
+\hypertarget{normalidad-de-hatbeta_4-cuando-el-error-es-exponencial.}{%
+\subsubsection{\texorpdfstring{Normalidad de \(\hat{\beta}_4\) cuando el
+error es
+exponencial.}{Normalidad de \textbackslash hat\{\textbackslash beta\}\_4 cuando el error es exponencial.}}\label{normalidad-de-hatbeta_4-cuando-el-error-es-exponencial.}}
+
+El siguiente gráfico nos muestra el gráfico QQ para el parámetro
+\(\hat{\beta}_4\) y su evolución al incrementar la cantidad de muestras
+\(n\).
+
+El mismo tiene una escala fija para que tenga sentido la comparación
+gráfica.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{intervalos }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(n_sim }\OperatorTok{<=}\StringTok{ }\DecValTok{50}\NormalTok{, }\KeywordTok{is.element}\NormalTok{(n,}\KeywordTok{c}\NormalTok{(}\DecValTok{10}\NormalTok{,}\DecValTok{100}\NormalTok{,}\DecValTok{1000}\NormalTok{,}\DecValTok{3000}\NormalTok{)),fun_a}\OperatorTok{==}\StringTok{'beta4'}\NormalTok{,distr_eps }\OperatorTok{==}\StringTok{ 'exponencial'}\NormalTok{)  }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{sample =}\NormalTok{estimador, }\DataTypeTok{color =}\NormalTok{ distr_eps) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_qq}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_qq_line}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_grid}\NormalTok{(n}\OperatorTok{~}\NormalTok{.) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Muestra"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Teórico"}
+\StringTok{  ) +}
+\StringTok{  guides( color = FALSE )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{informeSaleaAPDF_files/figure-latex/qq exponencial-1.pdf}
+
+Es interesante observar qué pasa si vamos reduciendo la escala también:
+El patrón de distancia a la recta de los cuantiles ideales se mantiene
+similar, aunque estas se ven reducidas hasta tal punto que en el otro
+gráfico donde mantenemos la escala constante parecen adherirse a ella.
+Pareciera observarse el efecto aritmético de dividir por \(n\),
+manteniéndose la relación de aspecto entre las distancias.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{intervalos }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(n_sim }\OperatorTok{<=}\StringTok{ }\DecValTok{50}\NormalTok{, }\KeywordTok{is.element}\NormalTok{(n,}\KeywordTok{c}\NormalTok{(}\DecValTok{10}\NormalTok{,}\DecValTok{100}\NormalTok{,}\DecValTok{1000}\NormalTok{,}\DecValTok{3000}\NormalTok{)),fun_a}\OperatorTok{==}\StringTok{'beta4'}\NormalTok{,distr_eps }\OperatorTok{==}\StringTok{ 'exponencial'}\NormalTok{)  }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{sample =}\NormalTok{estimador, }\DataTypeTok{color =}\NormalTok{ distr_eps) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_qq}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_qq_line}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_grid}\NormalTok{(n}\OperatorTok{~}\NormalTok{., }\DataTypeTok{scales=}\StringTok{"free"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Muestra"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Teórico"}
+\StringTok{  ) +}
+\StringTok{  guides( color = FALSE )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{informeSaleaAPDF_files/figure-latex/qq exponencial libre-1.pdf}
+
+\hypertarget{normalidad-de-hatbeta_4-para-los-diversos-errores-segun-n.}{%
+\subsubsection{\texorpdfstring{Normalidad de \(\hat{\beta}_4\) para los
+diversos errores según
+\(n\).}{Normalidad de \textbackslash hat\{\textbackslash beta\}\_4 para los diversos errores según n.}}\label{normalidad-de-hatbeta_4-para-los-diversos-errores-segun-n.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{intervalos }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(n_sim }\OperatorTok{<=}\StringTok{ }\DecValTok{50}\NormalTok{, }\KeywordTok{is.element}\NormalTok{(n,}\KeywordTok{c}\NormalTok{(}\DecValTok{10}\NormalTok{,}\DecValTok{100}\NormalTok{,}\DecValTok{1000}\NormalTok{,}\DecValTok{3000}\NormalTok{)),fun_a}\OperatorTok{==}\StringTok{'beta1'}\NormalTok{)  }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{sample =}\NormalTok{estimador, }\DataTypeTok{color =}\NormalTok{ distr_eps) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_qq}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_qq_line}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_grid}\NormalTok{(n}\OperatorTok{~}\NormalTok{distr_eps) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}
+    \DataTypeTok{x =} \StringTok{"Muestra"}\NormalTok{,}
+    \DataTypeTok{y =} \StringTok{"Teórico"}
+\StringTok{  ) +}
+\StringTok{  guides( color = FALSE )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{informeSaleaAPDF_files/figure-latex/qqses por n y distr_eps-1.pdf}
+
+\hypertarget{conclusiones-sobre-la-normalidad-del-estimador}{%
+\paragraph{Conclusiones sobre la Normalidad del
+Estimador}\label{conclusiones-sobre-la-normalidad-del-estimador}}
+
+Como vemos, incrementando lo suficiente el valor de \(n\) esta se
+termina manifestando rápidamente, aún cuando para el gráfico dejamos
+fijo el valor \(B=50\), uno muy chico respecto a los totales que
+manejamos, de hasta 3.000. Por supuesto, este fenómeno no se presenta
+sólo en las distribuciones que cumplen las hipótesis del Teorema del
+Límite central. En ese sentido la inclusión de error con distribución
+\(t_1\) nos permitió ver qué pasa cuando no es correcta la aproximación
+normal. En todos los casos observamos puntos que están drásticamente
+lejos de los cuantiles de la distribución normal.
+
+\hypertarget{conclusiones}{%
+\section{Conclusiones}\label{conclusiones}}
+
+En general se observan varias tendencias.
+
+\begin{itemize}
+\tightlist
+\item
+  Para todas las distribuciones obtuvimos mejores resultados con los
+  intervalos exactos.
+\item
+  En casi todas al incrementar \(n\) logramos llevar el nivel de los
+  intervalos asintóticos prácticamente al de los exactos, a partir de
+  ciertos tamaños se mueven a la par, es decir que estiman casi
+  idénticamente.
+\item
+  La única distribución del error que hizo que el estimador se comporte
+  fuera de lo esperable fue la Cauchy, todas las pedidas por la consigna
+  terminan por converger a un comportamiento asintóticamente normal.
+\item
+  Sería interesante buscar conjuntos de datos que no vengan de
+  distribuciones teóricas para ver si en ese caso los intervalos
+  asintóticos se comportan mejor.
+\item
+  Sería interesante hacer un estudio que contemple también la anchura de
+  los intervalos.
+\end{itemize}
+
+
+\end{document}

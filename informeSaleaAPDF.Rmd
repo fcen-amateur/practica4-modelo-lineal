@@ -3,7 +3,9 @@ title: "TP1, Modelo Lineal"
 author: "Gonzalo Barrera Borla y Octavio Martín Duarte "
 date: "5 de Junio de 2019"
 output:
-  html_document: default
+  pdf_document: default
+  header_includes:
+   - \usepackage{float}
 ---
 
 # Consignas
@@ -229,13 +231,13 @@ sintesis <- intervalos %>%
 sintesis %>%
   mutate (
     prop_cubre = round(digits=4,x=prop_cubre),
-    prop_cubre = cell_spec(prop_cubre,"html",
+    prop_cubre = cell_spec(prop_cubre,"latex",
                            color = ifelse(prop_cubre < 0.89,"red","blue"),
                            background = ifelse(prop_cubre < 0.86,"gray","white")
                            )
   ) %>%
   spread(n,prop_cubre) %>%
-  kable(format="html", escape = F, label="Proporción Cubierta por los intervalos, por tamaño n.") %>%
+  kable(format="latex", escape = F ) %>%
   kable_styling("condensed", "striped") %>%
   add_header_above(c(" "=3,"valores de n"=9))
 ```
@@ -253,13 +255,13 @@ sintesis <- intervalos %>%
 sintesis %>%
   mutate (
     prop_cubre = round(digits=4,x=prop_cubre),
-    prop_cubre = cell_spec(prop_cubre,"html",
+    prop_cubre = cell_spec(prop_cubre,"latex",
                            color = ifelse(prop_cubre < 0.89,"red","blue"),
                            background = ifelse(prop_cubre < 0.86,"gray","white")
                            )
   ) %>%
   spread(n,prop_cubre) %>%
-  kable(format="html", escape = F, label="Proporción Cubierta por los intervalos, por tamaño n.") %>%
+  kable(format="latex", escape = F) %>%
   kable_styling("condensed", "striped") %>%
   add_header_above(c(" "=3,"valores de n"=9))
 ```
@@ -274,13 +276,13 @@ sintesis <- intervalos %>%
 sintesis %>%
   mutate (
     prop_cubre = round(digits=4,x=prop_cubre),
-    prop_cubre = cell_spec(prop_cubre,"html",
+    prop_cubre = cell_spec(prop_cubre,"latex",
                            color = ifelse(prop_cubre < 0.89,"red","blue"),
                            background = ifelse(prop_cubre < 0.86,"gray","white")
                            )
   ) %>%
   spread(n,prop_cubre) %>%
-  kable(format="html", escape = F, label="Proporción Cubierta por los intervalos, por tamaño n.") %>%
+  kable(format="latex", escape = F) %>%
   kable_styling("condensed", "striped") %>%
   add_header_above(c(" "=3,"valores de n"=9))
 ```
@@ -441,6 +443,6 @@ intervalos %>%
   
 * Para todas las distribuciones obtuvimos mejores resultados con los intervalos exactos. 
 * En casi todas al incrementar $n$ logramos llevar el nivel de los intervalos asintóticos prácticamente al de los exactos, a partir de ciertos tamaños se mueven a la par, es decir que estiman casi idénticamente. 
-* La única distribución del error que hizo que el estimador se comporte fuera de lo esperable fue la Cauchy, todas las pedidas por la consigna terminan por converger, mostrando un comportamiento asintóticamente normal respecto a $n$. 
-* Sería interesante buscar conjuntos de datos que no vengan de distribuciones teóricas para ver si en ese caso los intervalos asintóticos se comportan mejor que los exactos. 
-* Sería interesante hacer un estudio que contemple también la anchura de los intervalos, por ejemplo un ANOVA donde el factor sea el método de obtención del intervalo para explicar la proporción de intervalos cubiertos. No lo intentamos porque estábamos justos de tiempo y la consigna no lo pide, pero ver todos los datos ordenados fue sugestivo y da ganas de investigar más. 
+* La única distribución del error que hizo que el estimador se comporte fuera de lo esperable fue la Cauchy, todas las pedidas por la consigna terminan por converger a un comportamiento asintóticamente normal. 
+* Sería interesante buscar conjuntos de datos que no vengan de distribuciones teóricas para ver si en ese caso los intervalos asintóticos se comportan mejor. 
+* Sería interesante hacer un estudio que contemple también la anchura de los intervalos. 
